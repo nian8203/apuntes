@@ -1,0 +1,288 @@
+ ================DevOps=======================
+
+herramientas = Chef, Puppet, Jenkins, Team City
+
+definición = unión de personas, procesos y productos para lograr la entrega de valor continuo para los usuarios finales
+author Donovan Brown
+
+* valor es referente a:
+    - nueva funcionalidad
+    - corrección de errores
+    - calidad de servicio
+    - resilencia a imprevistos
+
+* procesos
+    - automatizacion para crear software
+
+DevOps busca la colaboración entre desarrolladores y operaciones
+
+KAIZEN = mejora continua
+
+====tres vias======
+- pensamiento sistématico
+- incrementa flujos de feedback
+-cultura de experiminetación y aprendizaje continuo
+
+===============CAMS======================
+
+C= Cultura => tener buenos habitos
+    - comunicación abierta
+    - F.A.L.L.A Rápido
+        F acilita el
+        A prendizaje
+
+
+
+
+        L ecciones
+        L ibre de
+        A ngustia
+    - entrega de valor continuamnete
+    - Medición
+        releases por mes
+        bugs en producción
+        calidad de codigo
+        memoria en el servidor
+        satisfacción de usuarios
+    - colaboración (sharing)
+
+============================================
+
+
+==========REGLAS DE AUTOMATIZACION========== //by Bill Gates
+1. aplicada a una operación eficiente magnificara su eficiencia
+2. de una operación ineficiente magnificara su ineficiencia
+
+    antes de automatizar un proceso se deben remover lo que no funcione
+
+============================================
+
+==============CI/CD=========================
+
+CI continuos integratiosn => integración continuaS
+CD = continuos delivery => entrega continua
+
+PIPELINES pasos para llevar una idea a la realidad
+
+    - procesos manuales
+        - compilaciones = desarrolladores
+        - deployment = llevado manualmente a produccón
+        - testeo = pruebas manuales
+        - creación de ambientes = ambientes virtuales
+
+* un proceso repetido mas de 3 veces al mes debe ser automatizado
+
+* compilación
+    - Repositorio de artefactos = es donde se almacenan los binarios o los archivos producidos en tiempo de compilacón los subforlders dentro se nombran con el build Number
+        Repositorios:
+            - jfrog
+            - Nugget repo
+            - Sonatype nexus
+            - apache archiva
+        o usar un simple folder con sub folder
+
+* analisis estatico de codigo = revision de codigo automatizado en la etapa de compilación => ayudan a encontrar rapidos fallos en codigo
+    HERRAMIENTAS
+        - sonarqube
+        - r#
+        - coverity
+
+============================================
+
+* Buenas practicas DevOps
+    CI
+        - codificación
+        - compilación
+        - testeo
+    CD
+        - releases
+        - deployment
+
+* crear repositorios pequeños
+
+* llevar versionamineto de bases de datos
+    HERRAMIENTAS
+        - flyway
+        - liquibase
+        - redgate
+
+* realizar compilaciones en ambientes viruales para que realizen en un entorno mas limpio y no se generen conflictos con software  o archivos instalados (build machine) y asignar un buil number a cada compilación
+
+* Beneficios
+        - detectar problemas de integración de forma continua antes de realizar el release = procastinar
+        - disponibilidad constante de versiones para pruebas o release para producción
+        - testeo continuo
+
+* Seleccionar una herramientas de orquestación como pipeline-as-code para representar las pipeline como codigo para poderlas almacenar en las herramientas de versionamiento (gitlab)
+
+* Orquestación = coordinación de procesos automatizados
+    la integración produce la sensación de un flujo de trabajo (simula un trabajo en linea/serie) y permite detectar errores para evitar que pasen a otras etapas
+    herramientas
+        - jenkins
+        - gitlab
+        - go cd
+        - azure DevOps
+
+
+
+
+===================PRUEBAS/TESTEO===========================
+
+HERRAMIENTAS
+            - justinmind
+            - invision
+            - papel y lapiz
+
+* unit test //sirve para probar la calidad de codigo de la app
+    ESTRATEGIAS
+                - mocks
+                - stubs
+                - virtual service
+
+* integration test
+* user acceptance test
+
+
+TDD = test driven development
+
+====================== continus delivery (CD) = entrega continua ==========================
+
+    * Plataformas
+        - Datacenteres
+        - Nube = amazon web services, google cloud platform, microsoft azure
+        - hibrido
+
+    * Ambientes
+        - Produccion = donde las aplicaciones finales, certificados de seguridad
+        - Pre Produccion o staging => servidores de menor capacidad y realizar test, version lista para ir a produccion
+        - desarrollo => despliegue del build generado por CI, experimentar futures funcionales y no func antes de mover a los otros ambientes
+
+    * Recomendaciones
+        -utilizar herramientas = - orquestadores como jenkins, go city
+                                 - administracion de configuracion como shef, puppets, ansible para realizaer deployments
+        - vesrionar las pipelines = almacenarlas en el repositorio
+        - upgrade de bases de datos en conjuncion con la entrega de apps
+        -  encadenar los test al pipeline de CD despues de realizar depoloyments
+        - llevar historico de deployments + el rastreo de Builds por medio del build number
+
+    * Evitar
+        - poca frecuencia de releases
+
+
+======================IaC==========================
+
+- IaC = infraestructura como codigo = uso de tecnologias cloud
+
+* Principios
+    - reproducibilidad = reproducir cualquier elemento de la infraestructura de manera facil
+    - consistencia
+    - repetibilidad = generar tareas automatizadas
+    - desechabilidad = no casarse c[on un servidor
+    - continuidad de servicios = capacidad de recrear servidores para que nuestros servicios nunca se caigan => kubernates
+    - versionamineto total
+
+
+* ciclo de vida de un servidor
+    - creacion de un template => herramienta = packer
+    - creacion de un servidor =  se realiza desde el template
+    - actualizacion de servidor
+    - reemplazo de servidor =
+    - eliminacion de servidor
+
+
+* infraestructura inmutable
+    - crear un nuevo servidor en vez de realizar configuraciones
+
+    HERRAMIENTAS
+        Iac para la nube
+            - terraform
+            - cloud formation
+            - azure resortmanagement
+
+        para nube y locales
+            - chef
+            - puppet
+            - ansible
+            - saltstack
+
+        para desarrollo
+            - vagrant
+
+===================operaciones (ops)==========================
+
+termino para ing de sistemas, admin de sistemas, ing releases, admin base datos
+
+los ops son los encargados de implementar los requisitos no funcionales
+    - aprovisonameinto y configuracion
+    - configuracion de balanceadores de carga
+    - escalamiento horizontal y vertical de recursos
+
+
+CAB (change advisory board) esta conformafo por representantes de operaciones, redes, seguridad y desarrollo
+
+==============================================================
+
+
+========================monitoreo=============================
+
+2da via
+    incrementa los flujos de feedback
+
+TIPOS
+* Negocio
+* Aplicaciones
+* Servidores
+* Red
+
+- Instrumnetacion es la habilidad de crear un software que sea monitorable deben tener logs y endpoint
+- herraminetas para add logs = splunk, graylog, lelk
+- health endppoints , utilizar herramientas de monitoreo como = prometeus, datadog, influxdata
+                               herramientas de visualizacion de dashboard como = grafana, kibana
+
+==============================================================
+
+
+==============MODELO DE MADUREZ===============================
+
+se evalua en que etapa de DevOps nos encontramos y que debemos hacer para avanzar
+
+AREAS =
+        - cultura => buenos habitos
+        - procesos => codificar, monitorear, crear infraestructura, cadencia de releases, testeo continuo
+        - tecnologia => uso de herraminetas en diferentes niveles
+
+USO DE CINTURONES POR NIVELES =
+        - blanco o Ad hoc
+        - amarillo
+        - verde = nivel definido
+        - azul = nivel delerado
+        - negro = optimizdo => aqui estan los unicornios = estabilidad continua
+
+==============================================================
+
+turbulencia
+
+=========tacticas de adopcion = test automatizados
+
+- funcionalidad + test
+- prioriza un area a la vez
+
+* adoptar una herramienta
+        - orquestador o
+        - scripts de automatizacion => python, ruby o powershell
+
+* andon cord = no dejar pasar errores a la siguiente fase
+
+* Ingenieros SRE = software Reliability Enginner
+    - crea comunicacion entre las distintas areas
+    - acepta el fallos
+    - implementa cambios graduales
+    - aprovecha las herramientas y la automatizacion
+    - mide todo
+
+
+
+
+
+
+

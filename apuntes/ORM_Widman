@@ -1,0 +1,32 @@
+ORM = object relational mapping
+* permite interactuar con una base de datos sin tener conocimineto de lenguaje sql usando el pardigma de programacion orientada a objetos
+
+* Existen ORM para lenguajes como para framework
+    - eloquent laravel => php
+    - peewee => python
+    - SQLAlquemy => python
+    - entity framework => c#
+    - hybernate => java
+
+
+Las ORM traducen nuestro codigo a una sentencia sql que la base de datos logre comprender
+
+* ventajas
+        no hay tanto problema la realizar migracion de base de datos, se pueden usar trigers, procesos almacenados etc
+
+LINQ = language integrated query
+
+* es un componente de .net para realizar consultas de datos usando lenguaje parecido a sql
+* acepta extensiones lamda
+
+==========LAMBDA===============
+
+son funciones anonimas
+
+=======ENTITY FRAMEWORK============
+
+ado.netconjunto de componentes de software que pueden ser usados para acceder a datos
+
+Entity tecnologias ado.net que sirven para desarrollar app orientadas a datos sin la utilzacionde tanto codigo y sin preocuparse por tablas de base de datos
+
+===================================

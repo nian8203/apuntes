@@ -1,0 +1,11 @@
+- composer init
+- elegir nombre para crear paquete 
+- descripcion
+- minimum satbility //enter para dejar la mas estable
+- package type //puede ser libary o project por defecto project
+- license MIT
+- sguientes 2 pasos = NO
+- confirm = enter
+- cada vez que se haga composer install depues del primer archivo creado se creara un composer.lock
+
+

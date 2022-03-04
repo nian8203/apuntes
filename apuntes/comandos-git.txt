@@ -1,0 +1,112 @@
+- git --version
+- git --help //mas especifica git help <palabra clave> ej commit, config
+- q //salir imilar a ctrl + d en linux
+- git config --global user.name "<userName>" //config user
+- git config --global user.email "<correo.com>" //config email user
+- git config --global -e //para modificar press a, para salir esc :wq! w=write q=quit !=salir de inmediato
+- git init //inicializar el repositorio
+- git status //revisar estado de archivos
+- git add . //agregar archivos al stage y lode ja litos para agregar 
+- git reset <nombreArchivo> //archivo a eliminar
+- git commit -m "<reseña o comentario para observar que cambios se realizaron>"
+- git config core.autocrlf true //corregir error en CRLF
+- git checkout -- . //regresa el proyecto a un commmit o verson anterior
+- git branch //mostrar la rama e que se esta trabajando
+- git branch -m master  main //cambia el nombre de la rama de master a main
+- git config --global init.defaultBranch main //conf el nombre de la rama principal a main
+- git reset <nombre del archivo> regresa el archivo a un estado anterior
+- git commit -am "<mensaje>" //a=add siempre y cuando el archivo ya tenga segumiento(ya se haya hecho commit anteriormente)
+- git log //revisar historila de commits
+- git add *.html //agrega todos los archivos html 
+- git add js/*.js //agregar archivos que se encuentran en una ruta especifica
+------para agregar al repositorio una carpeta vacia se debe crear dentro un archivo .gitkepp----------
+- git status --short //muestra menos informacion
+- git config --global alias.s status --short //se crea abreviacion de status --short a s
+- git log --oneline //muestar mas ordenado la informacion 
+- git diff //visuaiza os cambios en los archivos modificados+
+- git diff --staged //visuaiza os cambios en los archivos modificados despues de hacer commit
+- git commit --amend -m "<mensaje>" //modificar algun error a la hora de hacer commit
+- git commit --amend //corregir los cambios del ultimo commmit
+- git reflog //carga todo historial de todo los procesos realizados 
+- git mv destruir-mundo.md salvar-mundo.md //mover el archivo (renombrar archivo)
+- git rm <nombreArchivo> //elimina archivos pero hay que hacer el commit para eliminarlos completamente
+- git reset --hard <numero hash> //regresar el archivo modificado a un estado anterior
+-------------.gitignore //se crea en la raiz para evitar cargar archivos en git-----
+- git checkout -b <nombreRama> //borrar rama se debe ubicar en la rama master se le puede agregar -f al final para forzar el delete
+- git branch -d <nombreRama> //borrar rama
+- git checkout <nombreRama> //cambiar de rama
+- git merge <nombreRama> //unir ramas se debe estar en rama master
+- git tag <nombreTag> //crear tags o verisones
+- git tag -a v1.0.0 -m "version 1.0.0 lista" // -a = anotacion -m mensaje crear tag
+- git tag // ver tags creados
+- git show <nombre tag> // ver informacion completa del tag
+- git push --tags //agregar tags a github
+- git stash //guardar info en una especie de contenedor para no tener que realizar commmit
+- git stash pop //recupera la utlima informacion guardada en el stash pero con los cambio sde comits que se han hecho
+- git stash clear //elimina todo rastro de los stash 
+- git stash list //muestra listado de stash
+- git stash apply <nombreStash> /recupera el satsh
+- git stash drop <nombreStash> //elimina el stage
+- git stash list --stat //ver info de stash
+- git rebase master //se debe ubicar en la rama que quiere modificar este comando mueve los puntos que han trabajado en otras ramas a un punto mas adelante en el tiempo
+- git rebase -i HEAD~4 //-i = interactivo ~ = virguliya HEAD~4 se devuelve 4 despues del head
+- git fetch //actualiza cambios sin cargarlos, se puede hacer antes del pull
+- git checkout 01750c6 miembros.md //git checkout <hash de commit antes del que necesitamos recuperar> <nombre del archivo> //recupera el archivo del siguiente commmit al hash seleccionado
+
+- git remote -v //url del origin
+- git remote add <nombreOrigen(alias)> <url origin>//nombre origen por lo general se usa upstream //crea repositorio remoto
+- git pull upstream master //revisar cambios en el fork
+
+- git status -sb //muestra las ramas
+- git branch -a //muestra todas las ramas
+- git remote prune origin //revisa las ramas que ya no existen en el remoto y actualiza las ramas existentes
+- git push origin :<nombre rama a eliminar> //borra la rama de manera remota, definitiva
+
+=============alias===================
+lg = log --graph --abbrev-commit
+
+
+
+=======================================================================================
+
+fork => copiar repositorio publico para hacer cambios y pedir autorizacion al dueño
+
+feature branch => ramas creadas par trabajar
+
+
+____________agregar colaboradores________________________
+- settings
+- manage acces
+- colaboradores
+
+___________crear sitio u organizacion____________________
+poner de nombre al repositorio nombreUsuario.github.io
+- settings/pages/choose a theme
+- realizar commit
+- en pages nuevamente ves la url
+- para mostrar portafolio source y seleccion rama seleccionar carpeta y save
+
+
+________________gist_____________________________________
+para guardar bloques de codigo para agregarlos cuando se necesiten
+guardar snippets o codigos que se encuentre en internet y tenerlo disponible para 
+no estar buscandolo nuevamente
+
+________________generar SSH______________________________
+ls .ssh  //validar si ya existen archivos ssh
+mkdir .ssh //crear archivo
+cd .ssh 
+ssh-keygen -t rsa -C "<correo>" //crear token, luego nos piden especificar la ruta a guardar token
+se puede poner passprhase //opcional
+el archivo a utilizar nombreArchivo.pub
+settings clave ssh copiar contenido archivo.pub y crear la key
+ssh -T git@github.com //conectarse con github
+podemos clonar un repositorio via ssh
+
+
+
+
+
+
+
+

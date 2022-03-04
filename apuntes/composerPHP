@@ -1,0 +1,51 @@
+camara de comercio bogota = money service
+1 coin = 1000 pesos
+prestamo de dinero persona a persona
+packagist // repositorio paquetes php
+"illuminate/container": "8.81" //agregar paquete en el require del composer y ejecutar composer update
+
+
+==============versionamiento=============
+
+mayor.menor.patch
+5.1.*   //lamejor que encuentre solo despues del 1. el 1.13 , 1.15 etc
+>=5.1.0 //mayor a esta version, de esta referencia hasta arriba
+>=5.1.0, <6.0 //se actualiza dentro de ese rango
+usar estos 3 numeros se llama versionamiento semantico
+patch => version menos significativa, arregalr bugs o codigo simple que no genera comflictos
+menor => aumenta cuando hay mejores funcionalidades cuando se agrega alguna funcinalidad no debe afectar la funcionalidad
+mayor => cuando se hacen cambios que ya afecta en la funcionalidad
+^5.1.0 => puede cambiar patch o menor pero no puede pasar a la version 6
+~5.1.0 => solo cambia el patch nunca va a saltar a 5.2
+
+=========================================
+
+===============actualizar alguna dependencia================
+composer update <nombreDependencia> //mediante consola ej. composer update illuminate/container =>actualiza la dependencia
+composer require <nombreDependencia> //en consola ej. composer require illuminate/database =>
+composer dump
+
+
+=================autoload=============
+"autoload": {
+    "psr-4": {  //estandar de configuracion
+        "Platzi\\": "app/"  //vaya y busque una clase con el namespace Platzi en la carpeta app
+    }
+}
+
+
+composer-autoload
+composerautoload
+composer dump //cualquiera d elos 3 sirev para leer la configuracion de autoload y cargar las clases especificadas
+
+camara de comercio bogota = money service
+1 coin = 1000 pesos
+prestamo de dinero persona a persona
+packagist // repositorio paquetes php
+versionamiento
+
+
+jueves 19 marzo 2020
+7 sep 2019
+
+

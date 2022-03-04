@@ -1,0 +1,85 @@
+# Scrumm
+
+* Product Backlog = requerimientos priorizados
+* Sprint se debe tener una mejor funcionalidad al finalizar cada sprint
+* Product increment
+
+
+secuencia metodoogia agil
+
+- basada en la empirica
+- Proecsos establecidos por Development Team
+- Alcance flexible (se tiene constante feedback del cliente)
+- Se trabaja en grupos pequeños
+- Proyectos de innovacion (cada que se logra un incremento se hace un entregable)
+- Eventos pensados en tener constante feedback
+- Se esperan cambios conforme evoluciona el Proyectos
+
+==========PILARES============
+- Transparencia
+- Adaptación
+- Inspección
+
+=============================
+
+========VALORES==============
+
+- Compromiso
+- Coraje
+- Enfoque
+- Franqueza
+- Respeto
+
+=============================
+
+=======FRAMEWORK_COMPUESTO_POR==============
+
+* ROLES
+    - Product owner
+    - Development Team
+    - Scrum master
+
+* EVENTOS
+    - Sprint planning
+    - Sprint
+    - Daily Scrum
+    - Sprint review
+    - Sprint Retorspective
+
+* ARTEFACTOS
+    - Product Backlog --mejoras, se pueden agregar funcionalidades
+        * reponsable = product owner
+        * se ejecutan los items que estan mas clarosS
+    - Sprint Backlog --
+        * debe cumplir con al menos 1 proceso de mejoras
+        * spring goal = es el objetivo que se planteo para ese spring
+        * se analiza que otras cosas se pueden implementar en los siguientes dias
+        * se van realizando cambios a medida que avance el sprint
+    - Increment
+        * es la suma del incremento del sprint anterior + el del sprint actual
+        * el product owner decide si se liberan estos cambios para el cliente
+
+=============EVENTOS DE SCRUM==================
+
+SPRINT = duración de 1 a 4 semanas
+- al finalizar un sprint se debe crear un incremento
+
+SPRINT PLANNING = duracion mx 8 hrs
+- planificar el trabajo a realizarse en el sprint
+- involucrados SCRUM TEAM
+
+DAILY SCRUM = duración 15 min diarios
+- planificar que se va a hacer las proximas 24 horas
+- involucrados DV Development Team
+
+SCRUM REVIEW = duracion max 4 hrs al final del sprint
+- revisar el incremento que se ha logrado,entre una y cuatro semanas del sprint
+- involucrados ST Scrum Team y Stakeholders
+- se realizan preguntas del avance y analizar los items a realizar a fututro
+- explicar mejoras y problemas que se dieron
+
+SCRUM RETROSPECTIVE = duracion max 3hrs al finalizar el sprint
+- mejora continua del Scrum Team
+- involucrados SM, PO, DT
+- revisar rendimiento de equipo
+- mejorar la produccion del equipo

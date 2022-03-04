@@ -1,0 +1,10 @@
+sudo pacman -S cronie
+sudo systemctl start cronie
+sudo systemctl enable cronie
+echo "export EDITOR=nano" >> $HOME/.bashrc
+export EDITOR=nano
+crontab -e
+* *   * * * touch /home/tu-usuario/prueba
+
+
+ESTIMACIONESSSSSS
