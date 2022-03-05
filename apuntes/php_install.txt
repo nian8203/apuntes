@@ -1,0 +1,287 @@
+Instalar LAMP en Manjaro (Linux, Apache, MySQL y PHP)
+
+7 de diciembre de 2021 by dani 7 comentarios
+Advertencia: Esta entrada contiene códigos o snippets que podrían no funcionar correctamente en tu instalación de WordPress, o podrían ser incompatibles con tu theme o plugins activos. Úsalos bajo tu responsabilidad, preferiblemente en un entorno de desarrollo y haz siempre copias de tus archivos antes de modificarlos.
+Introducción
+
+Como ya he comentado en algún post, Manjaro es una de mis distros favoritas. Una Arch Rolling con un entorno de escritorio a prueba de bombas (XFCE).
+
+Sin embargo siempre me muevo en la rama Debian-Ubuntu estable. Uno de los principales motivos es el Stack LAMP (Linux Apache MySQL PHP). Trabajo a menudo con proyectos web en local, casi siempre webs con problemas que tengo que analizar y reparar antes de aplicar los cambios en producción.
+
+La instalación del Stack LAMP en Debian-Ubuntu es bastante sencilla, aquí puedes ver un artículo que escribí hace un par de años y que a día de hoy sigue vigente (lo único que cambia es la versión de PHP).
+
+Pero siempre que he intentado instalar LAMP en otras ramas, como RPM o ARCH, he tenido diversos problemas para hacerlo funcionar, desistiendo y volviendo a mi zona de confort.
+
+Hace poco me lié la manda a la cabeza para instalarlo en Fedora, con excelente resultado (puedes ver el artículo completo).
+
+Pero en Manjaro, aunque tiene algunas similitudes con Fedora, hay que dar algunos pasos más, sobre todo en lo que a configuración de archivos se refiere.
+
+Como siempre, este artículo no solo está hecho para quien lo necesite, si no para mí mismo, tenerlo como referencia para cuando necesite volver a realizar una instalación, sin tener que buscar en varios posts por la Red. Vamos al lío…
+
+    Artículo disponible en vídeo
+
+Instalar el servidor web Apache
+
+Abrimos un terminal e instalamos el paquete apache.
+
+sudo pacman -S apache
+
+Una vez instalado, vamos a revisar el archivo de configuración de Apache para comprobar que el módulo unique_id_module está comentado:
+
+Para ello desde el terminal abrimos con el editor nano el archivo:
+
+sudo nano /etc/httpd/conf/httpd.conf
+
+Para buscar en nano puedes usar la combinación Ctrl+W y escribir el texto a buscar:
+
+Esta es la línea que tenemos que mantener comentada (anteponiéndole un #)
+
+Si ya estaba comentada, simplemente podemos salir pulsando Ctrl+X. Para guardar pulsa Ctrl+O.
+
+Ahora podemos habilitar el servicio de apache con el comando:
+
+sudo systemctl enable httpd
+
+E iniciarlo con el comando:
+
+sudo systemctl start httpd
+
+Si necesitamos reiniciar apache porque hayamos hecho algún cambio en la configuración, usamos el comando:
+
+sudo systemctl restart httpd
+
+No obstante, si queremos detener el servicio tecleamos el comando:
+
+sudo systemctl stop httpd
+
+Para comprobar que apache está corriendo, usa el comando:
+
+sudo systemctl status httpd
+
+Debería aparecer active (running):
+
+Para salir del monitor de estado de apache puedes detener con Ctrl+Z.
+
+También podemos abrir un navegador web y dirigirnos a la ruta http://localhost Debería aparecer el índice de apache (que en estos momentos estará vacío):
+
+Hemos terminado con apache, ahora instalaremos el gestor de bases de datos MySQL:
+Instalar MySQL (MariaDB)
+
+Nos dirigimos al terminal e instalamos el paquete mysql:
+
+sudo pacman -S mysql
+
+Nos avisará de que existen dos proveedores disponibles para instalar mysql. Vamos a elegir la opción 1) mariadb:
+
+IMPORTANTE: Antes de habilitar el servicio de mysql tenemos que inicializar el directorio de datos de MariaDB. Este paso no es necesario en otras ramas como Debian-Ubuntu o Fedora, pero en Manjaro (o la rama Arch en general) si.
+
+Para ello copiamos/pegamos el siguiente comando:
+
+sudo mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+
+Ahora podemos habilitar e iniciar mysql:
+
+sudo systemctl enable mysql
+
+sudo systemctl start mysql
+
+Igual que con apache, tenemos los comandos restart y stop para reiniciar o detener mysql.
+
+Vamos a comprobar el estado de mysql con el comando:
+
+sudo systemctl status mysql
+
+Al igual que con apache, debería aparecer Active: active (running):
+
+Detenemos el monitor de estado de mysql con Ctrl+Z.
+
+Ahora toca securizar mysql ya que por defecto únicamente viene con el usuario root sin contraseña:
+
+sudo mysql_secure_installation
+
+Nos pedirá nuestra contraseña de root (de sistema):
+
+Ahora nos pregunta si queremos darle una contraseña a la cuenta root de mysql, respondemos que si (Y):
+
+Change the root password? [Y/n] Y
+
+Respondemos que si (Y).
+
+New password: **********
+Re-enter new password: **********
+
+Al resto de preguntas podemos responder que si:
+
+Remove anonymous users? [Y/n] Y
+
+Disallow root login remotely? [Y/n] Y
+
+Remove test database and access to it? [Y/n] Y
+
+Reload privilege tables now? [Y/n] Y
+
+Thanks por using MariaDB!
+
+Entramos en MySQL:
+
+sudo mysql -u root
+
+Vamos a crear un nuevo usuario distinto al de root que será el que asignemos a las bases de datos que creemos posteriormente:
+
+CREATE USER mi_usuario IDENTIFIED BY 'contraseña';
+
+Podemos salir de MySQL con el comando exit:
+
+MariaDB [(none)]> exit;
+Bye
+
+Instalación y configuración de PHP
+
+Desde el terminal instalamos la paquetería php y php-apache
+
+sudo pacman -S php php-apache php-gd php-imagick
+
+php-gd y php-imagick son opcionales, pero los necesitaremos para poder manipular imágenes en WordPress.
+
+Como Manjaro es una versión contínua (rolling-release), la versión de PHP será la que haya disponible en el momento que realices la intalación.
+
+A la hora de escribir este artículo, la versión instalada es la 8.0.12.
+
+Puedes comprobar la versión instalada con el comando php -v:
+
+[dani@ThinkPad-T540p ~]$ php -v
+PHP 8.0.12 (cli) (built: Oct 20 2021 16:06:03) ( NTS )
+Copyright (c) The PHP Group
+Zend Engine v4.0.12, Copyright (c) Zend Technologies
+
+Es necesario habilitar y deshabilitar algunos módulos de apache para que PHP8 funcione correctamente en Manjaro:
+
+    LoadModule mpm_event_module modules/mod_mpm_event.so (DESHABILITADO).
+    LoadModule mpm_prefork_module modules/mod_mpm_prefork.so (HABILITADO).
+
+Para ello vamos al archivo de configuración de apache:
+
+sudo nano /etc/httpd/conf/httpd.conf
+
+Y localizamos los dos módulos anteriores, comentando el primero y descomentando (o añadiendo si no está) el segundo.
+
+Ahora añadimos al final del archivo las siguientes líneas:
+
+LoadModule php_module modules/libphp.so
+AddHandler php-script php
+Include conf/extra/php_module.conf
+
+Guardamos con Ctrl+O y salimos con Ctrl+X.
+
+Reiniciamos apache para que se apliquen los cambios.
+
+sudo systemctl restart httpd
+
+Vamos a probar que PHP funciona correctamente. Para ello vamos a crear un archivo info.php dentro de la carpeta raíz de proyectos de Apache que en Manjaro se encuentra en la ruta /srv/http:
+
+sudo nano /srv/http/info.php
+
+Y dentro llamamos a la función phpinfo();
+
+<?php
+    phpinfo();
+?>
+
+Guardamos, salimos de nano y nos dirigimos al navegador web, hacia la dirección http://localhost/info.php, donde tendrá que aparecer una pantalla como esta:
+
+Esto significa que tanto Apache como PHP están corriendo correctamente.
+
+Ahora, para gestionar las bases de datos de forma más cómoda, vamos a instalar y configurar phpMyAdmin, que en Manjaro también requiere de algunas configuraciones adicionales.
+Instalar y configurar phpMyAdmin
+
+Instalamos el paquete desde un terminal:
+
+sudo pacman -S phpmyadmin
+
+Antes de ejecutarlo necesitamos hacer algunas configuraciones en el archivo php.ini situado en la ruta /etc/php/php.ini:
+
+sudo nano /etc/php/php.ini
+
+Y descomentamos las siguientes líneas (eliminando el # o el ; del inicio):
+
+extension=bz2
+extension=gd
+extension=mysqli
+extension=iconv
+extension=pdo_mysql
+
+Ya que estamos, podemos aprovechar y modificar algunos parámetros para mejorar la experiencia con WordPress o cualquier otro CMS. Los parámetros mínimos aconsejables serían:
+
+memory_limit = 128M
+post_max_size = 64M
+max_execution_time = 180
+upload_max_filesize = 64M
+max_input_time = 180
+max_input_vars = 3000
+
+Los localizamos con Ctrl+W y los modificamos uno a uno.
+
+Tras finalizar, guardamos con Ctrl+O y salimos con Ctrl+X.
+
+Y reiniciamos apache ara que se aplique los cambios:
+
+sudo systemctl restart httpd
+
+Ahora necesitamos crear un archivo de configuración para phpMyAdmin que situaremos en la ruta:
+
+sudo nano /etc/httpd/conf/extra/phpmyadmin.conf
+
+Y dentro insertamos las siguientes líneas:
+
+Alias /phpmyadmin "/usr/share/webapps/phpMyAdmin"
+<Directory "/usr/share/webapps/phpMyAdmin">
+DirectoryIndex index.php
+AllowOverride All
+Options FollowSymlinks
+Require all granted
+</Directory>
+
+Guardamos y salimos.
+
+Volvemos al archivo de configuración de Apache:
+
+sudo nano /etc/httpd/conf/httpd.conf
+
+Y al final del archivo añadimos la siguiente línea:
+
+Include conf/extra/phpmyadmin.conf
+
+Ya estaríamos listos para inciar phpMyAdmin, pero para evitar que aparezcan algunos mensajes de error, configuraremos la frase secreta del panel editando:
+
+sudo nano /etc/webapps/phpmyadmin/config.inc.php
+
+Y localizamos la línea:
+
+$cfg['blowfish_secret'] = 'ESCRIBE_UNA_CLAVE_LARGA_Y_COMPLEJA'; /* YOU MUST FILL IN THIS FOR COOKIE AUTH!$ /**
+
+Y al final del archivo añadimos:
+
+$cfg['TempDir'] = '/tmp/phpmyadmin';
+
+Reiniciamos Apache.
+
+Abrimos el navegador y nos dirigimos a http://localhost/phpmyadmin, donde deberíamos ver la pantalla de login:
+
+Por último vamos a habilitar el modulo ReWrite en Apache para que podamos habilitar las URLs amigables en WordPress (en los enlaces permanentes).
+Habilitar mod_rewrite para URLs amigables en WordPress
+
+Nos dirimos al archivo de configuración de Apache:
+
+sudo nano /etc/httpd/conf/httpd.conf
+
+Y localizamos la parte de código donde empieza <Directory «/srv/http»>
+
+Un poco mas abajo modificamos la línea:
+
+AllowOverride None por AllowOverride All
+
+Y localizamos y descomentamos la línea:
+
+LoadModule rewrite_module modules/mod_rewrite.so
+
+Reiniciamos Apache y ya tendríamos listo el Stack LAMP para Manjaro y optimizado para WordPress.
