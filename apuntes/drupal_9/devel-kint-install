@@ -1,0 +1,40 @@
+Si instalar devel, kint, y search kint
+
+Buen día.
+
+Para instalar Devel, Kint y search Kint en Drupal 8 y 9 esta es la nueva manera:
+
+
+    primero instalas estos modulos.de devel:
+
+https://www.drupal.org/project/devel
+
+https://www.drupal.org/project/devel_php
+
+https://www.drupal.org/project/search_kint
+
+
+  2. Luego en la pagina:
+
+https://github.com/kint-php/kint
+
+te dira como instalar kint y ksm que son funciones que usamos para programar:
+
+Debes tener composer instalado, (si no sabes que es composer, buscar en google como instalar composer y listo)
+
+  3. abres un terminal y ejecutas en el terminar dentro de tu proyecto: composer require kint-php/kint --dev
+
+luego iras a la url: tudrupal/admin/config/development/devel y aqui vas a cambiar la opcion de default a kint. y ahora si  te va a permitir el uso del Kint y el KSM.
+
+  4. Luego ve a esta url:
+
+http://127.0.0.1/drupal/drupal-9.2.5/admin/config/development/devel/toolbar
+
+y selecciona: execute PHP.
+
+y Listo.
+
+
+==========abrir consola ejecutar codigo php=============
+ir al nav bar principal en dev o desarrollo
+http://localhost/Drupal/drupal/web/devel/php
