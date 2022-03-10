@@ -81,6 +81,10 @@ instalar modulo devel en drupal
     -seleccionar devel, devel_php
 
 
+============crear nuevo rol============
+people/roles/addRole
+
+
 
 
 
