@@ -38,3 +38,33 @@ y Listo.
 ==========abrir consola ejecutar codigo php=============
 ir al nav bar principal en dev o desarrollo
 http://localhost/Drupal/drupal/web/devel/php
+
+=========instalar drupal con drush======================
+composer require drush/drush //instalar drush
+php vendor/bin/drush site;install //instalar drupal depues de haber hecho composer drupal
+php vendor/bin/drush user:login //genera un link para ingresar sin logearse
+php vendor/bin/drush //ver todos los comandos
+php vendor/bin/drush  //ver todos los comandos de drush
+drush site:install //instalar drupal con -h para obtener ayuda
+drush user:login //ingresar directamente por si olvidamos pass
+drush gen module //generar un modulo
+
+
+=========instalación de lenguage========================
+instalar language , interface translation
+configuration/regional and language/
+interface translation import/import/
+- en la web ir a Drupal translation spanish
+- import seleccionar archivo descragado e instalar
+- import
+
+
+
+
+
+
+
+
+
+
+
