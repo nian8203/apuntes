@@ -13,6 +13,18 @@ https://www.drupal.org/project/devel_php
 
 https://www.drupal.org/project/search_kint
 
+[15/3 9:29] Diego Fernando Bastidas Rincón
+admin toolbar
+
+[15/3 9:32] Diego Fernando Bastidas Rincón
+admin toolbardevel
+
+[15/3 9:32] Diego Fernando Bastidas Rincón
+devel kint extras
+
+
+
+
 
   2. Luego en la pagina:
 
@@ -40,25 +52,88 @@ ir al nav bar principal en dev o desarrollo
 http://localhost/Drupal/drupal/web/devel/php
 
 =========instalar drupal con drush======================
+
+----todo dentro de la carpeta del proyecto ubicando la ruta de drush----------
+----para que un modulo funcione necesita dos archivos .info.yml & .module
+
 composer require drush/drush //instalar drush
-php vendor/bin/drush site;install //instalar drupal depues de haber hecho composer drupal
+composer require drupal/admin_toolbar
+composer require drupal/webform
+composer require 'drupal/admin_toolbar:^3.1'
+composer require 'drupal/devel'
+composer require drupal/devel_kint_extras
+composer require drupal/restui
+composer require drupal/webform_rest
+composer require drupal/webform_ui
+composer require drupal/admin_toolbar_links_access_filter
+
+
+php vendor/bin/drush site:install //instalar drupal depues de haber hecho composer drupal
 php vendor/bin/drush user:login //genera un link para ingresar sin logearse
 php vendor/bin/drush //ver todos los comandos
 php vendor/bin/drush  //ver todos los comandos de drush
 drush site:install //instalar drupal con -h para obtener ayuda
 drush user:login //ingresar directamente por si olvidamos pass
 drush gen module //generar un modulo
+vendor/bin/drush cr //clear cache
+php vendor/bin/drush en devel -y  //install devel
+php vendor/bin/drush en admin_toolbar -y
+php vendor/bin/drush en devel_kint_extras -y
+php vendor/bin/drush en webform -y
+
+***********instalacion restfull api *******************
+composer require drupal/restui //proporciona interfaz de usuario
+composer require 'drupal/restui:^1.20'
+php vendor/bin/drush en restui -y
+
+configuation/rest/content->enable
 
 
 =========instalación de lenguage========================
-instalar language , interface translation
+instalar language , interface translation buscando el modulo local
 configuration/regional and language/
 interface translation import/import/
 - en la web ir a Drupal translation spanish
 - import seleccionar archivo descragado e instalar
 - import
 
+============credenciales================================
+d9_test = User name: admin  User password: uJd5By9Hze
+d9_taller_drupal_backEnd = User password: R9UKWEWS7T
+d9_taller = User password: F3TKvvuZoZ
+d9_api = User password: CSVDSZGriE
+d9_t = User password: CpSFQ7Qvag
 
+
+
+
+
+===========crear menus =================================
+structure/menus
+menu principal igual nabvar , ya se selecciona en el campo donde se quiera add el menu
+
+===========crear rest api===============================
+structure/vista
+crear vista /configuation rest
+Formato/configuracion/json //para poder leer la info
+mostrar/entidad/campos
+campos/contenido/titulo -> desmarcar = enlazar contenido
+
+composer create-project drupal/recommended-project d9_taller_drupal_backEnd cd d9_taller_drupal_backEnd
+
+
+===========comandos drush===============================
+php vendor/bin/drush version
+php vendor/bin/drush status //info sobre la instalacion de drupal
+php vendor/bin/drush help
+php vendor/bin/drush topic
+php vendor/bin/drush <nombreModule> //info sobre modulo
+php vendor/bin/drush pm-list //listado de modulos disponibles
+php vendor/bin/drush pm-enable <nombreModule> //instala el modulo especificado
+php vendor/bin/drush pm-uninstall <nombreModule> //desinstalar modulo
+php vendor/bin/drush cache-clear <modulo> //actualizar cache especifico
+php vendor/bin/drush cr //vaciar todos los cache
+php vendor/bin/drush user:login <nameUser> //genera un enlace para acceder como usuario sin loguearse
 
 
 
