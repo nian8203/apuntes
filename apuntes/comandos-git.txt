@@ -104,7 +104,7 @@ ssh -T git@github.com //conectarse con github
 podemos clonar un repositorio via ssh
 
 
-
+token git = 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
 
 
 

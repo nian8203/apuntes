@@ -262,7 +262,7 @@ USO DE CINTURONES POR NIVELES =
 
 turbulencia
 
-=========tacticas de adopcion = test automatizados
+=========tacticas de adopcion = test automatizados============
 
 - funcionalidad + test
 - prioriza un area a la vez
@@ -278,7 +278,18 @@ turbulencia
     - acepta el fallos
     - implementa cambios graduales
     - aprovecha las herramientas y la automatizacion
-    - mide todo
+    - mide todo = verificar que el producto cumple con Buenas practicas antes de ir a un ambiente
+
+
+
+
+
+
+
+
+
+
+
 
 
 

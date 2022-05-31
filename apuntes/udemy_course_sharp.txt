@@ -1,0 +1,135 @@
+extensiones VSC para trabajar c#
+- c# for visual studio code for microsoft
+- c# extensions for JosKreativ
+- c# Snippets for Jorge Serrano
+- Material Icon Theme for Philipp Kief
+- NuGet Package Manager for jmrog
+- NuGet Gallery for pcislo
+
+________instalar mysql en docker_____________________________________________
+docker run --name mysql-server -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d mysql
+
+________comandos dotnet______________________________________________________
+dotnet new -l //muestra las plantillas que se pueden crear
+dotnet new sln //debemos estar ubicados dentro de la carpeta que queremos iniciar el proyecto y crear la solucion
+dotnet new webapi -o API //crear api y con -o especifica el directorio donde se quiere dejar la api
+dotnet sln -h //paso para poder agregar el proyecto a la solucion === linux => ./API/
+dotnet sln add .\API\ //agrega el proyecto a la solucion .\API\ es la ruta de nuestro proyecto
+dotnet sln list //para ver si se agrego el proyecto a la solucion
+dotnet new classlib -o Core //agregar una biblioteca de clases en la carpeta Core que se crea con -o
+dotnet sln add .\Core\ //agregar biblioteca de clases a carpeta core
+dotnet new classlib -o Infraestructura //crear biblioteca de clases
+dotnet sln add .\Infraestructura\ //add a la solucion
+dotnet add reference ..\Core //dentro de la carp Infra add una referncia del proyecto Core 
+==cd .. && cd API //para add new reference
+dotnet add reference ..\Infraestructura\ //add referencia Infra al proyecto
+dotnet run //correr para ejecutar igraciones
+dotnet ef migrations remove //borrar migraciones
+dotnet ef migrations remove –force
+
+code . //ejecutar vscode
+
+ctrl + shift + p => ejecutar >generate //genera carpeta bin y .vscode => compilar y depurar
+
+
+_________comandos docker______________________________________________________
+sudo docker ps -a //listar contenedores 
+sudo docker attach c //c= id contenedor =.comando para acceder a un contenedor
+sudo docker start c //c = id contenedor para arrancar contenedor
+
+
+__________empezar proyecto en vscode_________________________________________
+
+code . //ejecutar vscode
+ctrl + shift + p => ejecutar >generate //genera carpeta bin y .vscode => compilar y depurar
+crear folder => Core/Entities/Producto.cs => add get and set de objeto
+
+para poder crear la clase contexto se debe:
+- add paquete al proyecto infraestructure para realizar la conexion a la database
+- 2 maneras para instalar un paquete de nugget
+	1- ctrl+shift+p  >nuget: open gallery
+		- filtrar por = Microsoft.EntityFramework
+		- en la parte superior derecha seleccionar checkbox Infraestructura = install
+	2- desde consola cd Infraestructure 
+		- dotnet add package Microsoft.EntityFrameworkCore --version 6.0.4 = --version opcional
+		- para add paquete de db ir a Database Providers Microsoft en navegador
+		- dotnet add package Pomelo.EntityFrameworkCore.MySql
+		- dotnet add package Microsoft.EntityFrameworkCore.Desing
+
+crear /Infraestructure/Data/TiendaContext
+Tiendacontext : DbContext //debe crear la herencia
+luego nos paramos sobre la palabra DbContext => ctrl+. y add constructor(options) =>
+brinda una cadena para el acceso a la base de datos
+en el ejemplo solo tenemos una entidad que es Producto
+
+para usar Tiendacontext hay que add al contenedor de injeccion de dependencias lo cual se 
+	realiza en Program.cs 
+	se debe agregar el servicio de cadena de conexion
+
+luego agregar DefaultConnection en appsettings.json
+
+
+dotnet tool list -g //revisar si hay instaladas utilidades
+dotnet tool install --global dotnet-ef //instalar ef
+dotnet ef -h //ver ayuda para comando ef
+dotnet ef migrations -h //ayuda de comando migrations
+dotnet ef migrations InitialCreate -p .\Infraestructure\ -s .\API\ -o Data/Migrations =>
+-p especifica donde quiero crear mis migraciones
+-s que sera el proyecto de inicio
+-o aca se generaran las migraciones
+dotnet build //compilar la solucion para add la tabla a la db
+dotnet ef database update -p .\Infraestructure\ -s .\API\ //
+-p para indicar el proyecto que contiene las migraciones
+-s el proyecto de inicio
+
+========realizar ejecucion de migraciones automaticamente========================
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateAsyncScope())
+{
+    var services = scope.ServiceProvider;
+    var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+
+    try
+    {
+        var context = services.GetRequiredService<TiendaContext>();
+        await context.Database.MigrateAsync();
+    }
+    catch (Exception ex)
+    {
+        var logger = loggerFactory.CreateLogger<Program>();
+        logger.LogError(ex,"Ocurrio un error durante la migración");
+    }
+};
+
+cd API
+dotnet run //desde la carpeta principal API para crear la migracion 
+
+Folder Entity add Clases odjetos Categoria
+Todas las clases objetos add en Entities se deben add el dataset en el la clase context
+
+Nuevo folder de Configuracion en Infraestructure/Data/Configuration/ProductoConfiration.cs
+donde se crean y configuran los campos de la tabla con sus prop
+en las clase se debe heredar de IEntityConfiguration<nombreObjeto>
+crear una configuracion por caada tabla u objeto
+- spobreescribir el metodo 
+	protected OnModelCreating void OnModelCreating(ModelBuilder modelBueilder)
+	en DataContext
+
+- realizar las migraciones para add tablas y sus configuraciones
+	dotnet ef migrations add MarcasCategorias -p .\Infraestructure\ -s .\API\ -o Data\Migrations
+	-acceder al proyecto principal /api y ejecutar
+	dotnet run 
+
+- acceder a cd .\Infraestructure\ y ejecutar:
+	dotnet add package CsvHelper //sirve para add datos a nuestra db formato csv
+
+
+
+
+
+

@@ -1,0 +1,32 @@
+Wiki de arch:
+https://wiki.archlinux.org/index.php/...)
+Instrucciones:
+Añada un usuario a un grupo con la orden gpasswd como super user
+# gpasswd -a usuario grupo
+# gpasswd -a nian http
+
+#groups
+
+#exit sudo
+#groups nian
+
+
+Comenzaremos asegurándonos de que /srv/http pertenezca al grupo http:
+
+# chgrp http /srv/http
+
+Nos aseguramos también que nuestro usuario pertenezca al mismo grupo:
+
+# usermod -a -G http nian
+
+Asignamos los permisos adecuados:
+
+# chmod -R 775 /srv/http
+# chmod -R g+s /srv/http
+Y por último nos aseguramos de ser los propietarios del directorio:
+
+# chown -R nian /srv/http
+
+Comprobamos que todo sea correcto
+
+ls -l
