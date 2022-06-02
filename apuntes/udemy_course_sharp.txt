@@ -6,10 +6,20 @@ extensiones VSC para trabajar c#
 - NuGet Package Manager for jmrog
 - NuGet Gallery for pcislo
 
+________especificacion de folders____________________________________________
+Core = contine las clases que representan las tablas de la db(clases entidad y interfaces)
+Infraestructure= se define la clase contexto(se usa para consultar o guardarinfo en la base de 			datos), acceso a datos, implementacion de repositorios y unidad de
+	- configurar propiedades de la clase entidad, conocidas como clases dominio
+	- mapeos entre las tablas
+	- transacciones y mas
+API = Controladores API
+Migraciones = EntityFramework
+
 ________instalar mysql en docker_____________________________________________
 docker run --name mysql-server -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -d mysql
 
 ________comandos dotnet______________________________________________________
+//////////////estos comando son para iniciar un proyecto/////////////////////
 dotnet new -l //muestra las plantillas que se pueden crear
 dotnet new sln //debemos estar ubicados dentro de la carpeta que queremos iniciar el proyecto y crear la solucion
 dotnet new webapi -o API //crear api y con -o especifica el directorio donde se quiere dejar la api
@@ -23,6 +33,9 @@ dotnet sln add .\Infraestructura\ //add a la solucion
 dotnet add reference ..\Core //dentro de la carp Infra add una referncia del proyecto Core 
 ==cd .. && cd API //para add new reference
 dotnet add reference ..\Infraestructura\ //add referencia Infra al proyecto
+
+************comandos extras del proyecto*************
+dotnet ef -h
 dotnet run //correr para ejecutar igraciones
 dotnet ef migrations remove //borrar migraciones
 dotnet ef migrations remove –force
@@ -37,11 +50,241 @@ sudo docker ps -a //listar contenedores
 sudo docker attach c //c= id contenedor =.comando para acceder a un contenedor
 sudo docker start c //c = id contenedor para arrancar contenedor
 
-
+_____________________________________________________________________________
 __________empezar proyecto en vscode_________________________________________
+- crear la solucion dentro de la carpeta de proyecto
+	dotnet new sln
+- crear proyecto webapi
+	dotnet new webapi -o API
+		-o =especifica el dir donde quiero que se cree el proyecto
+- add el proyecto a la solucion(se escribe la ruta del pryecto que se quiere add)
+	dotnet sln add ./API/
+- add los otros dos proyectos Infraestructure y Core
+- add librerias de clase a los otros 2 proyectos
+	dotnet new classlib -o Core
+	dotnet new classlib -o Infraestructure
+- add proyecto a las olucion
+	dotnet add sln ./Core/
+	dotnet add sln ./Infraestructure/
+	dotnet sln list //validar si las soluciones se add al proyecto
+- add reference por que infraestructura va a depender de Core entonces nos ubicamos en la car[eta Infraestructure
+	cd ./Infraestructure/
+	dotnet add reference ../Core
+- add refrence de /Infra en appsettings
+	cd .. && cd API
+	dotnet add reference ../Infraestructure/
+
+- code . //ejecutar vs code
+- dentro de code ctrl+shift+p y en texbox ejecutar generate assets... //crea carpeta bin && vs.code que sirve  	para depurar y compilar
+
+- crear folder Core/Entities/Producto.cs
+	dentro de class Producto crear get y set de todas las propiedades del objeto
+	prop -> atajo de teclado
+	public string Name { get; set; }
+
+- crear clase contexto primero se deben add paquetes nugget
+	opcion 1
+		ctrl+shift+p ejecutar NuGet Gallery y buscar
+		Microsoft.EntityFrameworkCore
+
+		y hacer check en proyecto Infraestructure para
+
+	opcion2 dentro de Infraestructure
+		dotnet add package Microsoft.EntityFrameworkCore --version <laversionPacageNuget> ej(6.0.4)
+		dotnet add Pomelo.EntityFrameworkCore.MySql
+		dotnet add package Microsoft.EntityFrameworkCore.Design //dentro de API
+
+- crear class Context
+	Infraestructure/Data/TiendaContext.cs
+	la clase debe heredar de DbContext
+		TiendaContext : DbContext
+		ctrl. sobre DbContext para import using EntityFrameworkCore
+		ctrl. para crear el constructor con parametro options
+	fuera del constructor crear una coleccion de la entidad producto
+	- para poder utilizarlo se debe add al contenedor de injeccion de dependencias
+		public Dbset<Producto> Productos{get;set;}
+
+- add en API/Program.cs==============
+	dotnet add package Microsoft.EntityFrameworkCore //INSTALL EN API PROJECT
+	var serverVersion = new MySqlServerVersion(new Version("8,0,28")); //vesrion de mysql local
+
+	builder.Services.AddDbContext<TiendaContext>(options=>{
+		options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), //DefaultConnectionque se encuentar en settings.json
+		serverVersion);
+	});
+
+- add cadena de conexion
+	"ConnectionStrings": {
+    "DefaultConnection" : "Server=localhost; User=nian; Password=8203; Database=tiendadb"
+	},
+
+- instalar las utilidades de EntityFramework para validar ejecutar
+	dotnet tool list -g
+	- instalar la utilidad de EntityFramework ef
+	dotnet tool install --global dotnet-ef
+	- para actualizar si ya se cuenta con la utilidad
+	dotnet tool update --global dotnet-ef --version 6.0.4
+
+- para crear la primera migracion de maner manual ejecutamos dentro de la carpeta /
+	dotnet ef migrations add InitialCreate -p ./Infraestructure/ -s ./API/ -o Data/Migrations
+	-o -> indica el directorio donde se van a crear las migraciones
+	-s -> indicar el proyecto inicial o principal
+	-p -> en que proyecto se van a crear las migraciones
+
+	al ejecutar este comando se crearan las migracionesen el folder Infraestructure/Data/Migrations
+
+- para crear la base de datos se debe compilar solucion desde /  == tienda
+	dotnet build
+	dotnet ef database update -p ./Infraestructure/ -s ./API/
+
+- ejecutar migraciones de forma automatica add el siguiente codigo despues del condicional i			IsDevelopment
+	API/Program.cs
+
+	//code for execute automatic database migrations
+	using(var scope = app.Services.CreateAsyncScope()){
+
+    var services = scope.ServiceProvider;
+    var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+
+    try
+    {
+        var context = services.GetRequiredService<TiendaContext>();
+        await context.Database.MigrateAsync();
+        await TiendaContextSeed.SeedAsync(context, loggerFactory);
+    }
+    catch (Exception ex)
+    {
+
+        var logger = loggerFactory.CreateLogger<Program>();
+        logger.LogError(ex,"Ocurrio un error durante la migración");
+    }
+
+	} ;
+	*******************************ejecutar despues de pegar el codigo*****************************
+	este codigo se va a ejecutar al inicio de la aplicacion creando automaticamente las migraciones
+	se ejecuta desde el proyecto API, primero se debe borrar la base de datos
+	dotnet run
+	***********************************************************************************************
+
+- add nuevas Entidades(clases)
+	Core/Entities/Categoria.cs con get && set //id nombre,
+		si queremos agrgar una propiedad tipo Producto o de una clase
+		public ICollection<Producto> Productos {get;set;}
+	Core/Entities/Marca.cs con get && set //id nombre,
+		si queremos agrgar una propiedad tipo Producto o de una clase
+		public ICollection<Producto> Productos {get;set;}
+
+- aad referencias de Marca y Categoria en Producto
+	public int marcaId { get; set; }
+    public Marca marca { get; set; }
+    public int categoriaId { get; set; }
+    public Categoria categoria { get; set; }
+
+- modificar clase contexto en Infraestructure/Data/TiendaContext
+	add las nuevas Entidades
+
+	public DbSet<Marca> Marcas { get; set; } //
+	public DbSet<Categoria> Categorias { get; set; }
+
+- crear las clases de configuracion de las entidades
+	Infraestructure/Data/Configuration/ProductoConfiguration
+	implementar la interfaz heredando de IEntityTypeConfiguration<Producto>
+	ctrl+. sobre IEntityTypeConfiguration<Producto> e implementar interfaz
+
+	public void Configure(EntityTypeBuilder<Producto> builder)
+    {
+        builder.ToTable("Producto");
+
+        builder.Property(p => p.id)
+        .IsRequired();
+
+        builder.Property(p => p.nombre)
+        .IsRequired()
+        .HasMaxLength(100);
+
+         builder.Property(p => p.precio)
+        .HasColumnType("decimal(18,2)");
+
+         builder.HasOne(p => p.marca)
+        .WithMany(p => p.productos) //relacion con muchos productos
+        .HasForeignKey(p => p.marcaId);
+
+        builder.HasOne(p => p.categoria)
+        .WithMany(p => p.productos) //si no se add lo de los parentesis se add de una marcaId 1
+        .HasForeignKey(p => p.categoriaId);
+
+
+    }
+
+    tambien se puede implementar con DataAnotations
+
+    - crear configuaracion de Marca  Categoria
+
+    public void Configure(EntityTypeBuilder<Marca> builder)
+    {
+        builder.ToTable("Marca");
+
+        builder.Property(m => m.id)
+        .IsRequired();
+
+        builder.Property(m => m.nombre)
+        .IsRequired()
+        .HasMaxLength(100);
+    }
+
+     public void Configure(EntityTypeBuilder<Categoria> builder)
+    {
+        builder.ToTable("Categoria");
+
+        builder.Property(c => c.id)
+        .IsRequired();
+
+        builder.Property(c => c.nombre)
+        .IsRequired()
+        .HasMaxLength(100);
+    }
+
+- definir el llamado a las clases  en Infraestructure/Data/TiendaContext.cs
+
+		public TiendaContext(DbContextOptions options) : base(options)
+        {
+        }
+
+        public DbSet<Producto> Productos { get; set; }
+        public DbSet<Marca> Marcas { get; set; }
+        public DbSet<Categoria> Categorias { get; set; }
+
+- metodo apar add las configuraciones
+
+		//metodo para crear todas las configuraciones de las tablas Data/configuraion
+        protected override void OnModelCreating(ModelBuilder modelBuilder){
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
+
+- add la migarcion de tablas Marca y Categoria
+	dotnet ef migrations add MarcasCategorias -p ./Infraestructure/ -s ./API/ -o Data/Migrations
+
+- ejecutar aplicacion para crear tablas en la base de datos
+	dotnet run
+	revisar en dbeaver que se hayan creado las tablas
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 code . //ejecutar vscode
-ctrl + shift + p => ejecutar >generate //genera carpeta bin y .vscode => compilar y depurar
+ctrl + shift + p => ejecutar  >generate //genera carpeta bin y .vscode => compilar y depurar
 crear folder => Core/Entities/Producto.cs => add get and set de objeto
 
 para poder crear la clase contexto se debe:
