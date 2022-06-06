@@ -74,6 +74,37 @@ __________empezar proyecto en vscode_________________________________________
 	cd .. && cd API
 	dotnet add reference ../Infraestructure/
 
+========================================================================================
+===========================INGENIERIA INVERSA===========================================
+para hacer la ingenieria inversa primero debemos crear la base de datos y realizamos todos los pasos anterioresy tener instalado EntityFrameworkCore, EntityFrameworkCore.Design y Pomelo y ejecutar desde carpeta raiz ej folder:
+
+	dotnet ef dbcontext scaffold "Server=127.0.0.1;Port=3306; User=nian; Password=8203; Database=ivtiendadb" Pomelo.EntityFrameworkCore.MySql -s API -p Infraestructure --context TiendaContext --context-dir Data --output-dir Entities
+
+- Mover carpeta Entity a proyecto Core, cambiar namespace y eliminar partial de la clase
+- cambiar en TiendaContext Categorium por Categoria
+- modificar los using Infraestructure por Core
+- eliminar el metodo de override y copiar
+	                optionsBuilder.UseMySql("server=127.0.0.1;port=3306;user=nian;password=8203;database=ivtiendadb", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.7.3-mariadb"));
+
+- pegar el Program.cs y copiar la cadena de conexion y pegarla en appsettings.json
+
+	builder.Services.AddDbContext<TiendaContext>(options =>{
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection") ,Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.7.3-mariadb"));
+
+	});
+
+- pegar la cadena de conexion de appsettimgs.json en ConnectionStrings
+
+	"ConnectionStrings": {
+    "DefaultConnection": "server=127.0.0.1;port=3306;user=nian;password=8203;database=ivtiendadb"
+	},
+
+- crear var de la version del servidor
+
+	var ve
+
+========================================================================================
+
 - code . //ejecutar vs code
 - dentro de code ctrl+shift+p y en texbox ejecutar generate assets... //crea carpeta bin && vs.code que sirve  	para depurar y compilar
 
@@ -91,7 +122,7 @@ __________empezar proyecto en vscode_________________________________________
 
 	opcion2 dentro de Infraestructure
 		dotnet add package Microsoft.EntityFrameworkCore --version <laversionPacageNuget> ej(6.0.4)
-		dotnet add Pomelo.EntityFrameworkCore.MySql
+		dotnet add Pomelo.EntityFrameworkCore.MySql //dentro de Infraestructure
 		dotnet add package Microsoft.EntityFrameworkCore.Design //dentro de API
 
 - crear class Context
@@ -262,18 +293,58 @@ __________empezar proyecto en vscode_________________________________________
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
-- add la migarcion de tablas Marca y Categoria
+- add la migracion de tablas Marca y Categoria
 	dotnet ef migrations add MarcasCategorias -p ./Infraestructure/ -s ./API/ -o Data/Migrations
 
 - ejecutar aplicacion para crear tablas en la base de datos
 	dotnet run
 	revisar en dbeaver que se hayan creado las tablas
 
+- crear folder Infraestructure/Data/Configuration/ProductoConfiguration.cs
+	implemnetar la interfaz herdando de IEntityTypeConfiguration<Producto>
+	ctrl+. sobre IEntityTypeConfiguration e implementar la interfaz
 
+	public class ProductoConfiguration : IEntityTypeConfiguration<Producto>
+	{
+    public void Configure(EntityTypeBuilder<Producto> builder)
+    {
+        builder.ToTable("Producto");
 
+        builder.Property(p => p.id).IsRequired();
+        builder.Property(p => p.nombre).IsRequired().HasMaxLength(100);
+        builder.Property(p => p.precio).HasColumnType("decimal(18,2)");
+        builder.HasOne(p => p.marca).WithMany().HasForeignKey(p => p.marcaId);
+        builder.HasOne(p => p.categoria).WithMany().HasForeignKey(p => p.categoriaId);
+		}
+	}
 
+	Asi mismo se crean las configuraciones para las demas entidades ej:
 
+	public class MarcaConfiguration : IEntityTypeConfiguration<Marca>
+	{
+    public void Configure(EntityTypeBuilder<Marca> builder)
+		{
+        builder.ToTable("Marca");
 
+        builder.Property(m => m.id).IsRequired();
+        builder.Property(m => m.nombre).IsRequired().HasMaxLength(100);
+		}
+	}
+
+- add codigo en Infraestructure/Data/TiendaContext.cs para que se agreguen todas las 		configuraciones
+
+	 protected override void OnModelCreating(ModelBuilder modelBuilder){
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    }
+
+- realizar la migracion de las entidades agregadas
+	dotnet ef migrations add MarcasCategorias -p ./Infraestructure -s ./API/ -o Data/Migrations
+		si hay errores se puede corregir con
+	dotnet ef migrations remove
+
+- ejecutar aplicacion para crear tablas, desde carpeta /API
+	dotnet run
 
 
 
