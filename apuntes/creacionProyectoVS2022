@@ -1,0 +1,463 @@
+____instalar paquetes nugget EntiyFrameworkCore. -> Tools, AutoMapper(los dos primeros), Design, Sql y si es mysql add Pomelo
+
+____crear folder_____
+-  Models/Categoria.cs
+    add set y get y en Id add Anotation [Key]
+
+
+____crear folder_____
+-   Data/AplicationDbContext.cs
+    heredar de DbContext -> crtl+. y add constructor con parametro options y mapear el modelo
+
+    public DbSet<Categoria> Categorias { get; set; }
+
+
+___add cadena de conexion______
+    "ConnectionStrings": {
+    "DefaultConnection": "Server=MSI\\TEW_SQLEXPRESS;User=sa;Password=8203;Database=PeliculasApiv1;Trusted_Connection=false;MultipleActiveResultSets=true"
+    },
+    donde el Server es el de la conexion de management studio y user = ss esta en db login propiedades y add pass
+
+    Program.cs
+
+    builder.Services.AddDbContext<AplicationDbContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+____crear migracion___________
+- Herramientas/AdministradorDeNugget/ConsolaAdministrador y ejecutar
+    add-migration <NombreMigracion> ej PrimeraMigracion
+
+    se crea folder Migrations con las propiedades de la tabla luego ejecutar
+    update-database
+    para crear la base de datos
+
+____crear folder_____
+- Repository/IRepository/ICategoriaRepository.cs -> se crea Interface(no Clase) y se crean los metodos necesarios
+
+    public interface ICategoriaRepository
+    {
+    ICollection<Categoria> GetCategorias();
+    Categoria GetCategoria(int CategoriaId);
+    bool ExisteCategoria(string nombre);
+    bool ExisteCategoria(int id);
+    bool CrearCategoria(Categoria categoria);
+    bool ActualizarCategoria(Categoria categoria);
+    bool BorrarCategoria(Categoria categoria);
+    bool Guardar();
+    }
+
+____crear clase___________
+-   /Repository/CategoriaRepository.cs
+    heredar de ICategoriaRepository ctrl+. e implementar la interfaz y modificar los metodos
+    add constructor(atajo ctor) y pasarel como parametros AplicationDbContext db
+
+    private readonly AplicationDbContext _db;
+
+    public CategoriaRepository(AplicationDbContext db)
+    {
+        _db = db;
+    }
+
+    public bool ActualizarCategoria(Categoria categoria)
+    {
+        _db.Categorias.Update(categoria);
+        return Guardar();
+    }
+
+    public bool BorrarCategoria(Categoria categoria)
+    {
+        _db.Categorias.Remove(categoria);
+        return Guardar();
+    }
+
+    public bool CrearCategoria(Categoria categoria)
+    {
+        _db.Categorias.Add(categoria);
+        return Guardar();
+    }
+
+    public bool ExisteCategoria(string nombre)
+    {
+        bool valor = _db.Categorias.Any(c => c.Nombre.ToLower().Trim() == nombre.ToLower().Trim());
+        return valor;
+    }
+
+    public bool ExisteCategoria(int id)
+    {
+        return _db.Categorias.Any(c => c.Id == id);
+    }
+
+    public Categoria GetCategoria(int CategoriaId)
+    {
+#pragma warning disable CS8603 // Posible tipo de valor devuelto de referencia nulo
+        return _db.Categorias.FirstOrDefault(c => c.Id == CategoriaId);
+#pragma warning restore CS8603 // Posible tipo de valor devuelto de referencia nulo
+    }
+
+    public ICollection<Categoria> GetCategorias()
+    {
+        return _db.Categorias.OrderBy(c => c.Nombre).ToList();
+    }
+
+    public Categoria GetCategorias(int CategoriaId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Guardar()
+    {
+        return _db.SaveChanges() >= 0 ? true : false;
+    }
+
+______add implemnetacion Repository Program.cs _____________________________
+-   builder.Services.AddScoped<IcategoriaRepository, CategoriaRepository>();
+
+
+______crear DTO_______________________________
+-   Models/Dto/CategoriaDto.cs
+
+    public class CategoriaDto {
+    public int Id { get; set; }
+    [Required(ErrorMessage ="Este campo es obligatorio")] //si deja solo igual pasa un error pero en ingles
+    public string Nombre { get; set; }
+    public DateTime FechaCreacion { get; set; }
+    }
+
+
+______crear folder AutoMapper______________
+    add las 2 primeras extensiones de mapper de paquetes nugget
+-   PeliculasMapper/PeliculasMappers.cs que hereda de Profile ctrl+. add constructor
+
+    public class PeliculasMappers : Profile
+    {
+    public PeliculasMappers()
+    {
+        CreateMap<Categoria, CategoriaDto>().ReverseMap();
+    }
+    }
+
+______crear controlador API______________
+    [Route("api/[controller]")] //esto es igual a "api/Categoria"
+    [ApiController]
+    public class CategoriaController : ControllerBase
+    {
+        private readonly ICategoriaRepository _ctRepo;
+        public CategoriaController(ICategoriaRepository ctRepo)
+        {
+            _ctRepo = ctRepo;
+        }
+
+        [HttpGet]
+        public IActionResult GetCategorias()
+        {
+            var listaCategorias = _ctRepo.GetCategorias();
+            return Ok(listaCategorias);
+        }
+    }
+
+______modificar metodo get del controlador_______________
+
+        add private readonly IMapper _mapper y pasarlos como parametros en el constructor e igualarlos
+        _mapper = mapper;
+
+        [HttpGet]
+        public IActionResult GetCategorias()
+        {
+            var listaCategorias = _ctRepo.GetCategorias();
+            var listaCategoriasDto = new List<CategoriaDto>();
+
+            foreach (var lista in listaCategorias)
+            {
+                listaCategoriasDto.Add(_mapper.Map<CategoriaDto>(lista));
+            }
+
+            return Ok(listaCategoriasDto);
+        }
+
+_______add Porgram.cs __________________________________
+
+    builder.Services.AddAutoMapper(typeof(PeliculasMapper)); //si da error cambiar todos los nombres de Mapper por Mapper s
+
+
+_______implementar los demas metodos de ICategoriaRepository en CategoriaRepository.cs __________________
+
+    - crear instancia para la cadena de conexion
+        private readonly AplicationDbContext _bd;
+
+        [HttpGet("{categoriaId:int}",Name = "GetCategoria")]
+        public IActionResult GetCategoria(int CategoriaId)
+        {
+            var itemCategoria = _ctRepo.GetCategoria(categoriaId);
+
+
+            if (itemCategoria == null)
+            {
+                return NotFound;
+            }
+
+            var itemCategoriaDto = _mapper.Map<CategoriaDto>(itemCategoria);
+
+            return Ok(itemCategoriaDto);
+        }
+
+
+        [HttpPost]
+        public IActionResult GetCategoria([FromBody] CategoriaDto categoriaDto)
+        {
+            if (categoriaDto == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(_ctRepo.ExisteCategoria(categoriaDto.Nombre))
+            {
+                ModelState.AddModelError("", "La categoria ya existe");
+                return StatusCode(404, ModelState);
+            }
+
+            if(!_ctRepo.CrearCategoria(categoria))
+            {
+                ModelState.AddModelError("", $"Algo salio mal! guardando el registro {categoria.Nombre}");
+                return StatusCode(500, ModelState);
+            }
+
+
+            return CreateAtRoute("GetCategoria", new{categoriaId = categoria.Id}, categoria);
+        }
+
+
+        [HttpPatch("{categoriaId:int}",Name = "ActualizarCategoria")]
+        public IActionResult ActualizarCategoria(int categoriaId, [FromBody] CategoriaDto categoriaDto)
+        {
+            if (categoriaDto == null || categoriaId != categoriaDto.Id)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var categoria = _mapper.Map<Categoria>(categoriaDto);
+
+            if(!_ctRepo.ActualizarCategoria(categoria))
+            {
+                ModelState.AddModelError("", $"Algo salio mal en el momento de actualizar el registro {categoria.Nombre}");
+                return StatusCode(500, ModelState);
+            }
+
+
+            return NoContent();
+        }
+
+
+_______MODELO PELICULA_____________________
+
+
+        [Key]
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string RutaImagen { get; set; }
+        public string Descripcion { get; set; }
+        public string Duracion { get; set; }
+        public enum TipoClasificacion { Siete, Trece,Dieciseis, Dieciocho }
+        public TipoClasificacion clasificacion { get; set; }
+        public DateTime FechaCreacion { get; set; }
+        public int CategoriaId { get; set; }
+        [ForeignKey("CategoriaId")]
+        public Categoria Categoria { get; set; }
+
+
+_______ADD DbSet del modelo en AplicationDbContext
+        public DbSet<Pelicula> Peliculas {get; set;}
+
+
+_______ADD MIGRACION__________________________
+add-migartion CrearTablaPelicula
+update-database
+
+
+_______ADD DTO_______________________________
+
+
+        ---------using static Api.Models.Dto-----------
+        --------/Models/Dto/PeliculaCreateDto.cs---------
+
+
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string Nombre { get; set; }
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string RutaImagen { get; set; }
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string Descripcion { get; set; }
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string Duracion { get; set; }
+
+        public TipoClasificacion clasificacion { get; set; }
+
+        public int CategoriaId { get; set; }
+
+        public Categoria Categoria { get; set; }
+
+
+        ---------/Models/Dto/PeliculaCreateDto.cs---------
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string Nombre { get; set; }
+
+        public string RutaImagen { get; set; }
+
+        public IFromFile Foto { get; set; }
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string Descripcion { get; set; }
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string Duracion { get; set; }
+
+        public TipoClasificacion clasificacion { get; set; }
+
+        public int CategoriaId { get; set; }
+
+        public Categoria Categoria { get; set; }
+
+
+        ---------/Models/Dto/PeliculaUpdateDto.cs---------
+
+
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string Nombre { get; set; }
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string RutaImagen { get; set; }
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string Descripcion { get; set; }
+
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public string Duracion { get; set; }
+
+        public TipoClasificacion clasificacion { get; set; }
+
+        public int CategoriaId { get; set; }
+
+
+_________Crear Interface IPeliculasRepository_________________
+
+
+    public interface IPeliculaRepository
+    {
+    ICollection<Pelicula> GetPeliculas();
+    ICollection<Pelicula> GetPeliculasEnCategoria(int CatId);
+    Categoria GetPelicula(int CategoriaId);
+    bool ExistePelicula(string nombre);
+    IEnumerable<Pelicula> BuscarPelicula(string nombre);
+    bool ExistePelicula(int id);
+    bool CrearPelicula(Pelicula pelicula);
+    bool ActualizarPelicula(Pelicula pelicula);
+    bool BorrarPelicula(Pelicula pelicula);
+    bool Guardar();
+    }
+
+
+_________Crear Interface PeliculasRepository_________________
+
+    Implementar igual que CategoriaRepository
+
+    public IEnumerable<Pelicula> BuscarPelicula(string nombre)
+    {
+        IQueryable<Pelicula> query = _bd.Pelicula;
+
+        if(!string.IsNullOrEmpty(nombre))
+        {
+            query = query.Where(e => e.Nombre.Contains(nombre) || e.Descripcion.Contains(nombre));
+        }
+
+        return query.ToList();
+    }
+
+____________ADD SCOPE DE PELICULA EN Program.cs_______________
+    builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository >();
+
+____________ADD CONTROLADOR DE PELICULA_______________
+
+crear private readonly IWebHostEnviroment _hostingEnviroment y pasarlos como parametros en el constructor e igualarlos
+_hostingEnviroment = hostingEnviroment
+en CrearPelicula([FromForm] PeliculaCreateDto PeliculaDto)
+
+y crear la subida de Peliculas crear una variable antes de var pelicula
+
+
+    var archivo = PeliculaDto.Foto;
+    string rutaPrincipal = _hostingEnviroment.WebRootPath;
+    var archivos = HttpContext.Request.Form.files;
+
+    if (archivo.Length > 0)
+    {
+        //nueva imagen
+        var nombreFoto = Guid.NewGuid().ToString();
+        var subidas = Path.Combine(rutaPrincipal, @"fotos");
+        var extension = Path.GetExtension(archivos[0].FileName);
+
+        using(var fileStreams = new FileStream(Path.Combine(subidas, nombreFoto + extension), FileMode.Create))
+        {
+            archivos[0].CopyTo(fileStreams);
+        }
+        PeliculaDto.RutaImagen = @"\fotos\" + nombreFoto + extension;
+
+    }
+
+
+    -------crear carpeta wwwroot/dentro folder fotos------
+
+_______MAPEAR FUNCIONES DE PELICULA EN PeliculasMappers_______
+    CreateMap<Pelicula, PeliculaDto>().ReverseMap();
+    CreateMap<Pelicula, PeliculaCreateDto>().ReverseMap();
+    CreateMap<Pelicula, PeliculaUpdateDto>().ReverseMap();
+
+
+_______PROBAR CON POSTMAN_____________________________________
+post
+Body
+form-data y llenar key y value para enviar los datos necesarios
+
+
+para mostrar los comentarios documnetados
+    - click derecho sobre porpiedades del proyecto
+    - compilacion
+    - seleccionar archivo de documentacion xml
+    - add a la ruta nombre del proyecto.xml(ej: ApiPelis.xml)
+
+
+solucionar warnings
+    - click derecho sobre porpiedades del proyecto
+    - compilacion
+    - suprimir las advertencias
+    - add codigos de advertencias mostradas en consola
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

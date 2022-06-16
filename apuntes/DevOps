@@ -1,0 +1,16 @@
+claves DevOps
+
+trabajo colborativo -> jira teams slack
+integracion continua CI -> junit git selenium
+entrega continua -> docker jenkins kubernates
+infrastructura como codigo -> terraform ansible
+supervision registro -> prometeus grafana elk
+aprendizaje validado -> recopilacion de informacion para mejorar
+
+tipos de escalado
+- vertical no es muy bueno llega el momento que ya no se puede mejorar(add mas recursos a la maquina)
+- horizontal
+
+aprobado realizar esta
+no aplica
+no aplica
