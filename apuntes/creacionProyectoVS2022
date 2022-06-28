@@ -215,6 +215,7 @@ _______implementar los demas metodos de ICategoriaRepository en CategoriaReposit
                 return StatusCode(404, ModelState);
             }
 
+            var categoria = _mapper.Map<Categoria>(categoriaDto);
             if(!_ctRepo.CrearCategoria(categoria))
             {
                 ModelState.AddModelError("", $"Algo salio mal! guardando el registro {categoria.Nombre}");
