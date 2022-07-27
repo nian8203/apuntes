@@ -1,3 +1,25 @@
+ctrl+R/ctrl+G  // eliminar using innecsarios
+F9 // parase sobre la linea que se quiere poner un punto de interrupcion
+shift+mayus //borrar todos los puntos de interrupcion
+ctrl+E+D //formatear codigo
+ctrl+K/ctrl+D //formatear codigo
+ctrl+E+F // dar formato a seleccion
+ctrl+k+C ó E+C //comentar seleccion
+ctrl+K+U ó E+U //descomentar
+add new file (64-bit) //extension para crear un archivo con teclado buscar en google
+shift+F2 //crear new file eje: Model/Persona.cs
+ctrl+K+S // roder codigo eje: meter un segmento dentro de un if ó for => click derecho fragmento de codigo/rodear con
+crtl+K+X  / c# //insertar fragmento de codigo eje: ctor, cw, prop =>
+ctrl+K+B //Herramientas/Administrar  fragmentos de Codigo/
+
+efset
+
+-----cargar fragmento de codigo personalizado------------------------
+Herramientas Administrar fragmentos de Codigo/My Code Snnipets //ruta: Users/Usuario/Visual Studio 2022/My Code Snippets/
+Importar //archivo.snippet
+
+
+
 ____instalar paquetes nugget EntiyFrameworkCore. -> Tools, AutoMapper(los dos primeros), Design, Sql y si es mysql add Pomelo
 
 ____crear folder_____
