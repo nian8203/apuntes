@@ -1,0 +1,324 @@
+show create table nombre tabla; //revisar llaves foraneas en tabla
+alter table cursos drop foreign key cursos_ibfk; //borrar llave foranea
+
+/*****quitar restricciones llaves foraneas para eliminar tablas**********/
+
+SET FOREIGN_KEY_CHECKS=0; //Evita revisar restricciones de llaves foráneas para poder eliminar tablas
+DROP TABLE roles;
+SET FOREIGN_KEY_CHECKS=1;//Eliminar tabla y habilita revisar restricciones de llaves foráneas
+
+SELECT nombre_columna, COUNT(*) Total
+FROM clientes
+GROUP BY nombre_columna
+HAVING COUNT(*) > 1 //saber cuantos registros por codigo hy repetidos
+
+select COUNT(*) FROM asignaturas_evidencias;
+
+SELECT id_asignatura, COUNT(*) Total
+FROM asignaturas_evidencias
+GROUP BY id_asignatura
+HAVING COUNT(*) > 1
+
+ALTER TABLE usuarios ADD COLUMN cc VARCHAR(3) not null INT FIRST;
+ALTER TABLE usuarios DROP COLUMN edad, DROP COLUMN email;
+alter TABLE cursos ADD FOREIGN KEY(director) REFERENCES personas(id);
+alter table nombreAntiguo rename nombreNuevo; 
+alter table nombreTabla add nombreColumna tipodeDato;
+alter table nombreTabla modify nombreColumna nuevoTipodeDato; //modificar tipo de dato;
+alter TABLE cursos ADD CONSTRAINT FOREIGN KEY(id_persona) REFERENCES personas(id)
+alter table cursos drop primary key;
+alter table cursos add id int not null AUTO_INCREMENT primary key;
+alter table registroAlumnos add curso VARCHAR(4) not null after apellido;
+
+
+create table registroAlumnos (id int not null AUTO_INCREMENT, nombre VARCHAR(20) not null, PRIMARY KEY(id));
+delete from registroAlumnos where nombre = 'jghjgj'; // borra regsitros pero el conteo continua donde iba
+delete from registroAlumnos where nombre = 'nelso' BETWEEN 15 and 19;
+update cursos set director = 897654327 where id = 1101;
+UPDATE registroAlumnos SET nombre = null;
+update nombreTabla set nombreColumna = 'nuevoRegistro' where referencia = valor;
+update alumnos set grupo = '501' where id BETWEEN 10 and 15; // cambiar valores entre los id indicados
+TRUNCATE table registroAlumnos; //borrar todas el contenido de las columnas de la tabla mencionada he inicia el id de 1 nuevamente 
+FOREIGN key (nombreLlavePrimaria) REFERENCES nombreTabla(nombreLlavePrimaria);
+
+select nombre,id from alumnos where grupo = 501; //selccion seccion por curso
+select * FROM alumnos WHERE nombre = 'nicolas';
+select * from alumnos where nombre = 'nicolas' and id = 22; //se puede usar and o or <> (diferente)
+select * from alumnos where nombre like '%n'; //seleccionar los nombres terminados en n
+select * from alumnos where nombre like 'n%'; //seleccionar los nombres que comienzan en n
+select * from alumnos where id in (15,25,35); //busca los registros dentro del parentesis
+select * from alumnos where id < 20 order by nombre; //orden alfabetico opcional se puede terminar con ASC sera el mismo resultado
+select * from alumnos where id < 20 order by nombre DESC; //orden alfabetico descendente
+
+
+truncate registroAlumnos; // eliminar todos los registros de la tabla he inicia el incremento de nuevo;
+UPDATE registroAlumnos set nombre = ?, curso = ?
+
+LOAD data local INFILE '/home/nian/nuevo.csv'
+into table alumnos
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(nombre,grupo); //  importar csv en la tabla seleccionada 
+
+SELECT * from alumnos
+into OUTFILE '/home/nian/listado.csv'
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+
+create table registroAlumnos (id int not null AUTO_INCREMENT,
+nombre VARCHAR(20) not null,
+apellido VARCHAR(20) not null,
+correo VARCHAR(20) not null,
+direccion VARCHAR(50) not null,
+telefono VARCHAR(20) not null,
+PRIMARY KEY(id));
+
+insert into registroalumnos values
+(null,'mariana','pinzon','mariana25@gmail.com','calle me perdi !!!','3182365978'),
+(null,'anotnella','ruiz','la_tola@gmail.com','calle de donde es ','3182365978'),
+(null,'felipe','romero','felipe@gmail.com','calle no la encuentro No 666 ','3182365978'),
+(null,'daniela','perez','danielaP@gmail.com','calle no sed onde ando','35269878978');
+
+******************crear diccionario de datos*************************
+1. seleccionar database
+2. database - reverse engineer
+3. pestaña mySql model
+4. seleccionar database
+5. tools - catalog - generate html
+
+LOAD data local INFILE '/home/nian/Descargas/clientes.csv'
+into table clientes
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(codigo,seccion,nombre,precio,fecha,importado,pais);
+
+
+
+************************************************
+
+create table registroAlumnos (id int not null AUTO_INCREMENT,
+nombre VARCHAR(20) not null,
+apellido VARCHAR(20) not null,
+correo VARCHAR(20) not null,
+direccion VARCHAR(50) not null,
+telefono VARCHAR(20) not null,
+PRIMARY KEY(id));
+
+**********************tabla productos********************
+
+create table productos(
+codigo VARCHAR(4) not null,
+seccion VARCHAR(20) not null,
+nombre VARCHAR(20) not null,
+precio decimal(7,2) not null,
+fecha date not null,
+importado BINARY not null,
+pais VARCHAR(20) not null,
+PRIMARY KEY(codigo));
+
+ **************tabla clientes************************
+ 
+create table clientes (
+codigo VARCHAR(4) not null,
+nombre VARCHAR(20) not null,
+direccion VARCHAR(20) not null,
+ciudad VARCHAR(20) not null,
+telefono VARCHAR(20) not null,
+responsable VARCHAR(20) not null,
+PRIMARY key(codigo));
+
+LOAD data local INFILE '/home/nian/Descargas/tbClientes.csv'
+into table clientes
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(codigo,nombre,direccion,ciudad,telefono,responsable);
+
+****************tabla pedidos*************************
+
+create table pedidos (
+codPedido VARCHAR(10) not null,
+codCliente VARCHAR(4) not null,
+fecha VARCHAR(10) not null,
+metodoPago VARCHAR(10) not null,
+descuento decimal(4,3) not null,
+enviado BINARY not null,
+FOREIGN KEY (codCliente) REFERENCES clientes(codigo),
+PRIMARY KEY (codPedido));
+
+LOAD data local INFILE '/home/nian/Descargas/tbPedidos.csv'
+into table pedidos
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(codPedido,codCliente,fecha,metodoPago,descuento,enviado);
+
+******************tabla pedido_producto*******************
+
+create table pedido_producto(
+codPedidofk VARCHAR(10) not null,
+codProducto VARCHAR(4) not null,
+cantidad int not null,
+FOREIGN KEY (codPedidofk) REFERENCES pedidos(codPedido),
+FOREIGN KEY (codProducto) REFERENCES productos(codigo));
+
+LOAD data local INFILE '/home/nian/Documentos/ADSI/DataBase/secretaria.csv'
+into table secretarias
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(identificacion,nombre,apellido,correo,telefono);
+
+explain o describe nombre de la tabla;
+
+******************exportar base de datos***************
+ 
+alter table productos modify precio VARCHAR(10) not null;
+
+mysqldump –u nian -p prueba > dbPrueba.sql //se debe exportar fuera de mysql
+
+******************importar base de datos***************
+
+mysql -u nian -p  nombreDB < nombreArchvo.sql //se debe ubicar en la ubicacion donde se encuentra la tabla sin entrar a mysql
+
+rm -f nombreArchivo.extension // borrar archivo
+mkdir nombreCarpeta // crear carpetas
+
+select ciudad from clientes;
+select *from clientes;
+select responsable from clientes;
+select *from clientes where ciudad like "%A"; /*busqueda por palabras terminadas en A*/
+select *from clientes where ciudad like "A%"; /*busqueda por palabras que empiezan en A*/
+select *from clientes where codigo between 'CT23' and 'CT30'; /*encontrar un valor de una c*/
+select AVG(precio) as promedio from productos; /*mostrar promedio de precio total*/
+select AVG(precio) as promedio, seccion from productos GROUP by seccion; /*promedio precio */
+select *from productos where pais='USA' and seccion= 'JUGUETER?A';
+SELECT seccion, nombre, precio from productos where precio < (SELECT AVG(precio) from produ
+SELECT nombre, direccion, ciudad from clientes where codigo in (SELECT codPedido from pedid
+
+/*--------------------------INNER JOIN-------------------------------*/
+
+select p.codPedido, p.metodoPago, p.enviado, c.nombre, c.direccion, c.ciudad
+from pedidos AS p
+INNER JOIN clientes as c
+ON p.codCliente = c.codigo AND p.metodoPago = 'CONTADO' AND enviado = '0' ORDER BY nombre;
+
+SELECT * FROM pedido_producto
+INNER JOIN pedidos
+ON pedido_producto.codPedidofk = pedidos.codPedido
+
+SELECT codPedido, codCliente, fecha, enviado FROM pedido_producto
+INNER JOIN pedidos
+ON pedido_producto.codPedidofk = pedidos.codPedido
+
+select clientes GROUP by poblacion;
+
+insert into evidencias
+values('234567','Evidencia N1','6.9',CURRENT_TIMESTAMP(),'1019144598','234567','789654123';
+
+insert into evidencias values('234569','EvidenciaN3','8.9',NOW(),'1019144598','234567','789654123');
+
+LOAD data local INFILE '/home/nian/Documentos/tbRoles.csv'
+into table roles
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(id,nombre);
+
+LOAD data local INFILE '/home/nian/Documentos/tbPersonas.csv'
+into table personas
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(id,documento,nombre,apellido,telefono,direccion,correo,contraseña,id_rol);
+
+LOAD data local INFILE '/home/nian/Documentos/tbCursos.csv'
+into table cursos
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(numero,id_persona);
+
+LOAD data local INFILE '/home/nian/Documentos/tbMatriculas.csv'
+into table matriculas
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(id,fecha,id_secretaria,id_estudiante,id_acudiente);
+
+LOAD data local INFILE '/home/nian/Documentos/tbEvidencias.csv'
+into table evidencias
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(codigo,descripcion,fecha);
+
+LOAD data local INFILE '/home/nian/Documentos/tbPersonasEvidencias.csv'
+into table personas_evidencias
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(id_persona,id_evidencia,nota);
+
+LOAD data local INFILE '/home/nian/Documentos/tbAsignaturas.csv'
+into table asignaturas
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(codigo,nombre);
+
+
+
+administrador
+estudiantes
+acudientes
+matriculas fk admin
+
+create table roles(
+    id int not null AUTO_INCREMENT,
+    nombre VARCHAR(20) not null,
+    PRIMARY key(id)
+);
+
+create table personas(
+    id int not null AUTO_INCREMENT,
+    nombre VARCHAR(30) not null,
+    apellido VARCHAR(30) not null,
+    telefono VARCHAR(20) not null,
+    direccion VARCHAR(50) not null,
+    correo VARCHAR(50) not null,
+    id_rol integer not null,
+    FOREIGN key(id_rol) REFERENCES roles(id),
+    PRIMARY key(id)
+);
+
+create table matriculas(
+    id int not null AUTO_INCREMENT,
+    fecha date not null,
+    id_secretaria int not null,
+    id_estudiante int not null,
+    id_acudiente int not null,
+    FOREIGN key(id_secretaria) REFERENCES personas(id),
+    FOREIGN key(id_estudiante) REFERENCES personas(id),
+    FOREIGN key(id_acudiente) REFERENCES personas(id),
+    PRIMARY key(id)
+);
+
+insert into matriculas values
+(null,'2005-12-21',4,1,9),
+(null,'2000-10-10',4,2,10)
+
+insert into roles values
+(null,'estudiante'),
+(null,'docente'),
+(null,'secretaria');
+
+insert into personas values
+(null,'daniel','fonseca','893258741','calle 18','nelson@gmail.com',4),
+(null,'julian','vargas','753259421','calle 86','juan@gmail.com',4),
+(null,'antonio','cartagena','calle 78','antonio@gmail.com',4)
+
+
+(null,'nicolas','rodriguez','123456789','calle 26','niko@gmail.com',1),
+(null,'antonella','rodriguez','987654321','calle 56','anto@gmail.com',1),
+(null,'tatiana','torres','654321987','calle 89','tatis@gmail.com',2);
+
+
+create table usuarios(
+    user VARBINARY(50) not null,
+    password BLOB not null
+);
+
+alter table alumnos add direccion VARCHAR(50) not null after telefono;
+
+insert into usuarios values(AES_ENCRYPT('nelson','AES'),AES_ENCRYPT('123456','AES'));//encriptacion de contraseñas

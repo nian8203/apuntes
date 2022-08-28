@@ -1,0 +1,55 @@
+CREATE DATABASE prueba;
+USE prueba;
+CREATE TABLE usuarios(
+    id int AUTO_INCREMENT,
+    nombre VARCHAR(30) NOT NULL,
+    apellido VARCHAR(30) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    PRIMARY KEY(id)
+);
+CREATE TABLE roles(
+    id INT AUTO_INCREMENT,
+    nombre VARCHAR(30) NOT NULL,
+    PRIMARY KEY(id)
+);
+CREATE TABLE usuarios_roles(
+    id INT AUTO_INCREMENT,
+    usuario_id INT,
+    role_id INT,
+    PRIMARY KEY(id),
+    FOREIGN KEY(usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY(role_id) REFERENCES roles(id)
+);
+
+SHOW CREATE TABLE usuarios;
+
+INSERT INTO usuarios values
+(NULL,'nicolas','rodriguez','nicolas@gmail.com'),
+(NULL,'antonella','parrado','anto@gmail.com'),
+(NULL,'maria','guevara','maria@gmail.com');
+
+INSERT INTO roles values
+(NULL,'admin'),
+(NULL,'docente'),
+(NULL,'acudiente');
+
+INSERT INTO usuarios_roles values
+(NULL,1,1),
+(NULL,2,1),
+(NULL,3,3);
+
+
+SELECT *FROM usuarios;
+SELECT *FROM usuarios WHERE id = 1 or nombre = 'antonella';
+
+
+ALTER TABLE usuarios ADD COLUMN edad VARCHAR(3) not null;
+ALTER TABLE usuarios ADD COLUMN telefono VARCHAR(3) not null AFTER email;
+ALTER TABLE usuarios ADD COLUMN cc VARCHAR(3) not null INT FIRST;
+
+ALTER TABLE usuarios DROP COLUMN edad, DROP COLUMN email;
+
+
+
+
+
