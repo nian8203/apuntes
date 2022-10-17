@@ -1,0 +1,181 @@
+=================DEPENDENCIAS=====================
+OAuth2 Resource Service
+Spring Configuration Processor
+    POMXML
+        spring-security-config
+        spring-security-core
+        spring-core
+        spring-security-oauth2-core
+        spring-security-oauth2-jose
+        nimbus-jose-jwt
+
+=================ARQUITECTURA=====================
+
+/config/SecurityConfig
+
+    @Configuration
+    @EnableWebSecurity
+
+    -InMemoryDetailsService
+        .password("{noop}password")
+    -securityFilterChanges
+
+    @Bean
+	public InMemoryUserDetailsManager user() {
+		return new InMemoryUserDetailsManager(
+				User.withUsername("nian")
+				.password("{noop}password")
+				.authorities("read")
+				.build());
+	}
+
+* pararealizar pruebas crear omecontroller
+    home(Principal principal)
+        principal.getName() = obtiene el nombre del usuario logueado
+
+
+        @Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+		return http
+				.csrf(csrf -> csrf.disable())
+				.authorizeRequests(auth -> auth
+						.anyRequest().authenticated()
+				)
+				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.httpBasic(Customizer.withDefaults())
+		.build();
+        }
+
+        crear un conrolador de prueba, se puede pasar (Principal principal) como parametro para obtener el usuario logueado
+
+=================CREAR RSA KEYS=====================
+
+//add la linea de auth
+	.authorizeRequests(auth -> auth
+	.anyRequest().authenticated()
+	)
+	.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+
+
+crear carpeta certs
+/resources/certs
+desde consola dentro de la carpeta ejecutar
+    openssl genrsa -out keypair.pem 2048 //generar clave privada rsa
+
+    openssl rsa -in keypair.pem -pubout -out public.pem //generar clave publica rsa
+
+    openssl pkc8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out private.pem //codificar en formato pkcs8 codificado o si no se obtendra un error por que l calve privada debe estar en este formato
+
+    eliminar keypair
+
+
+=================CREAR RSA CLASS=====================
+crear clase para no exponer las claves rsa
+/config/RsaKeyProperties de tipo record ej(record RsaKeyProperties)y add anotacion
+@ConfigurationProperties(prefix = "rsa")
+
+ @ConfigurationProperties(prefix = "rsa")
+    public record RsaKeyProperties(RSAPublicKey publicKey, RSAPrivateKey privateKey) {
+
+    }
+
+add en main class
+@EnableConfigurationProperties(RsaKeyProperties.class)
+
+add los pathh en aplication.properties
+    rsa.private-key=classpath:certs/private.pem
+    rsa.public-key=classpath:certs/public.pem
+
+ - realizar la injeccion de dependencias de RsaKeyProperties   	en SecurityConfig
+	@Autowired
+	private RsaKeyProperties rsa;
+
+** Configurar JwtDecoder  JwtEncoder en SecurityConfig
+	@Bean
+	JwtDecoder jwtDecoder() {
+		return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
+	}
+
+	@Bean
+	JwtEncoder jwtEncoder() {
+		JWK jwk = new RSAKey.Builder(rsaKeys.publicKey()).privateKey(rsaKeys.privateKey()).build();
+		JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+		return new NimbusJwtEncoder(jwks);
+	}
+
+
+=================CREAR TOKEN SERVICE=====================
+
+/service/TokenService
+@Service
+
+    @Autowired
+	private JwtEncoder encoder;
+
+	public String generateToken(Authentication authentication) {
+		Instant now = Instant.now();
+		String scope = authentication.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.collect(Collectors.joining(" "));
+		JwtClaimsSet claims = JwtClaimsSet.builder()
+				.issuer("self")
+				.issuedAt(now)
+				.expiresAt(now.plus(1,ChronoUnit.HOURS))
+				.subject(authentication.getName())
+				.claim("scope",scope)
+				.build();
+
+		return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+	}
+
+
+=================CREAR TOKEN CONTROLLER=====================
+crear post para obtener token
+
+    private Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+	@Autowired
+	private TokenService tokenService;
+
+	@PostMapping("/token")
+	public String token(Authentication authentication) {
+			logger.debug("Token requested for user: '{}'",authentication.getName());
+			String token = tokenService.generateToken(authentication);
+			logger.debug("Token granted {}",token);
+			return token;
+	}
+
+================CREAR LOGIN CON USER AND PASS DESDE DB======
+
+eliminar de FilterChain .httpBasic(Customizer.withDefaults())
+y add
+.exceptionHandling((ex) -> ex
+						.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+						.accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
+
+cambiar nombre de AuthenticationManager a UserDetailsService
+@Bean
+public UserDetailsService user() {
+
+y agregar clase para la autenticacion
+	@Bean
+	public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
+		var authProvider = new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(userDetailsService);
+		return new ProviderManager(authProvider);
+	}
+
+CREAR MODEL LOGINREQUEST tipo record y pasar como parametros username, password
+	public record LoginRequest(String username, String password)
+
+pasar esta clase como parametro en el CONTROLLER TOKEN
+
+
+
+
+
+
+
+

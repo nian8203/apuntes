@@ -1,0 +1,177 @@
+CREATE TABLE
+();
+
+INSERT INTO roles VALUES
+('bec74e3b-af44-4871-aecd-4f87c6782839','ROLE_ADMIN'),
+('cae2d7f4-b2c0-4cf3-937e-4b19113bfcfd','ROLE_USER');
+
+INSERT INTO users VALUES
+('a0b59c87-6b30-44d8-93c9-454d639d7733','$2a$10$bDuvEMy6GwZ5ZcNpPVaDGuHow8EKTArQl7YWVPTcW0Ed5cfqmjvP2','nian'),
+('c01e9194-a5a9-4964-b618-b196651757c1','$2a$10$bDuvEMy6GwZ5ZcNpPVaDGuHow8EKTArQl7YWVPTcW0Ed5cfqmjvP2','niko');
+
+INSERT INTO users_roles VALUES
+('a0b59c87-6b30-44d8-93c9-454d639d7733','bec74e3b-af44-4871-aecd-4f87c6782839'),
+('c01e9194-a5a9-4964-b618-b196651757c1','cae2d7f4-b2c0-4cf3-937e-4b19113bfcfd');
+
+
+id UUID PRIMARY KEY DEFAULT gen_random_uuid(), //generar uuid incremental
+//======================= tablas db billar ==============================
+DROP DATABASE admin_billar;
+
+CREATE DATABASE admin_billar;
+
+\c admin_billar
+
+CREATE TABLE categorias(
+    id UUID PRIMARY KEY,
+    nombre varchar(30) UNIQUE not null
+);
+
+CREATE TABLE mesas(
+    id UUID PRIMARY KEY,
+    numero varchar(3) UNIQUE not null
+);
+
+CREATE TABLE productos(
+    id UUID PRIMARY KEY,
+    referencia varchar(30) not null,
+    marca varchar(30) not null,
+    precio int not null,
+    inventario int not null,
+    categoria_id uuid not null,
+    FOREIGN KEY(categoria_id) REFERENCES categorias(id)
+);
+
+CREATE TABLE pedidos(
+    id UUID PRIMARY KEY,
+    fecha DATE not null,
+    mesa_id UUID not null,
+    FOREIGN KEY(mesa_id) REFERENCES mesas(id)
+);
+
+
+CREATE TABLE pedidos_productos(
+    pedido_id uuid not null,
+    producto_id uuid not null,
+    cantidad int not null,
+    FOREIGN KEY(pedido_id) REFERENCES pedidos(id),
+    FOREIGN KEY(producto_id) REFERENCES productos(id)
+);
+
+CREATE TABLE pedidos_productos1(
+    pedido_id uuid not null,
+    producto_id uuid not null,
+    cantidad int not null,
+    FOREIGN KEY(pedido_id) REFERENCES pedidos(id),
+    FOREIGN KEY(producto_id) REFERENCES productos(id)
+);
+
+ALTER TABLE productos
+ALTER COLUMN categoria_id TYPE varchar(30);
+
+
+INSERT INTO categorias VALUES
+('153f522e-1cee-46ea-89b8-ca4f219c8e0c','paquetes'),
+('73890793-cd9c-492e-93c3-5e95d1da5a63','cigarrillos'),
+('d628bdca-76ce-4339-9206-f5c4f5a05329','cerveza');,
+('a5c99068-c51d-4d33-b93b-ae9838dcc3ff','bebidas'),
+('bab8b395-2a5f-453d-8e9a-a77d8c58ade5','licores'),
+('6a3e03c1-918c-474f-bdfc-cf662d604cb0','otros');
+
+INSERT INTO mesas VALUES
+('4e924d1f-f578-40df-9be1-13021c1cda54','1'),
+('8f8e5fd9-00cc-4fbd-9bce-a7305b724101','2'),
+('d4345bed-b38d-43ee-b3e3-04b6d596559c','3'),
+('98d38503-c71e-453a-8292-942b6b0b9ca3','4'),
+('785864ca-e7f0-44d4-b23f-be93e2088843','5');
+
+INSERT INTO categorias VALUES
+('153f522e-1cee-46ea-89b8-ca4f219c8e0c','paquetes'),
+('73890793-cd9c-492e-93c3-5e95d1da5a63','cigarrillos'),
+('d628bdca-76ce-4339-9206-f5c4f5a05329','cerveza');
+
+INSERT INTO productos VALUES
+('fac9c597-e4a5-4fd3-b63a-78d6288a3a8b',120,'reds',3500,'cerveza','d628bdca-76ce-4339-9206-f5c4f5a05329'),
+('d8445926-cce7-4220-902d-665f0b2e5bea',120,'poker',3500,'cerveza','d628bdca-76ce-4339-9206-f5c4f5a05329');
+
+('a8b0bcb8-ec96-4865-b547-73d035dcaecc',25,'margarita',2500,'papas','153f522e-1cee-46ea-89b8-ca4f219c8e0c'),
+('2bb9b4d7-859c-4632-8c57-6f6e4d2ed1b1',30,'todo rico',3000,'picante','153f522e-1cee-46ea-89b8-ca4f219c8e0c');
+
+('fac9c597-e4a5-4fd3-b63a-78d6288a3a8b',120,'reds',3500,'cerveza','d628bdca-76ce-4339-9206-f5c4f5a05329'),
+('d8445926-cce7-4220-902d-665f0b2e5bea',120,'poker',3500,'cerveza','d628bdca-76ce-4339-9206-f5c4f5a05329');
+
+('fac9c597-e4a5-4fd3-b63a-78d6288a3a8b',120,'reds',3500,'cerveza','d628bdca-76ce-4339-9206-f5c4f5a05329'),
+('d8445926-cce7-4220-902d-665f0b2e5bea',120,'poker',3500,'cerveza','d628bdca-76ce-4339-9206-f5c4f5a05329'),
+('3fe6862b-ff33-478e-b3ad-8e42f5e1dfbf',50,'malboro',10000,'cigarrillos 1/2','73890793-cd9c-492e-93c3-5e95d1da5a63'),
+('4b71b576-e9f0-423c-b2c4-508529f1a96a',20,'todo rico',4000,'picante','153f522e-1cee-46ea-89b8-ca4f219c8e0c');,
+('6e58cc42-7954-45ba-818e-e6eb1618fc2d','papas','margarita',2300,30,'153f522e-1cee-46ea-89b8-ca4f219c8e0c');,
+('c903c8ac-ead2-4934-8d60-bc8ea4267b6d',20,'nectar',40000,'aguardiente 1/2','bab8b395-2a5f-453d-8e9a-a77d8c58ade5'),
+('d71c2c32-8342-46b8-bf74-766a7482e53e',10,'nectar',70000,'aguardiente botella','bab8b395-2a5f-453d-8e9a-a77d8c58ade5'),
+('d29e2225-7bba-4a8f-baf0-4c64c004fa2a',60,'cocacola',3000,'gaseosa','a5c99068-c51d-4d33-b93b-ae9838dcc3ff'),
+('fac9c597-e4a5-4fd3-b63a-78d6288a3a8b',30,'manantial',3000,'agua','a5c99068-c51d-4d33-b93b-ae9838dcc3ff'),
+
+
+INSERT INTO pedidos VALUES
+('3ce34065-371a-48b3-ad26-26cb5437013f','2010-10-25','82d47eaa-7138-4e17-90f8-558170d84513');
+
+
+('9e03ec9f-2419-4e9a-b8c3-78f4adb3b577','2010-10-25','82d47eaa-7138-4e17-90f8-558170d84513'),
+('ff80b017-fe51-4a67-93b9-a34b858da02e','2010-10-24','8f8e5fd9-00cc-4fbd-9bce-a7305b724101');
+
+INSERT INTO pedido_producto VALUES
+('44e8fa72-cf0b-43c3-815f-ff0e97c7b1f3',4,'3ce34065-371a-48b3-ad26-26cb5437013f','d8445926-cce7-4220-902d-665f0b2e5bea'),
+('48457b63-52d6-4c1f-b230-b1d99a8265db',2,'3ce34065-371a-48b3-ad26-26cb5437013f','a8b0bcb8-ec96-4865-b547-73d035dcaecc'),
+('eba7651b-0445-4a4a-9ad6-be192e75bb3a',4,'3ce34065-371a-48b3-ad26-26cb5437013f','d8445926-cce7-4220-902d-665f0b2e5bea');
+
+('9e03ec9f-2419-4e9a-b8c3-78f4adb3b577','d8445926-cce7-4220-902d-665f0b2e5bea'),
+('9e03ec9f-2419-4e9a-b8c3-78f4adb3b577','d8445926-cce7-4220-902d-665f0b2e5bea'),
+('9e03ec9f-2419-4e9a-b8c3-78f4adb3b577','d8445926-cce7-4220-902d-665f0b2e5bea'),
+('9e03ec9f-2419-4e9a-b8c3-78f4adb3b577','d8445926-cce7-4220-902d-665f0b2e5bea'),
+('9e03ec9f-2419-4e9a-b8c3-78f4adb3b577','c903c8ac-ead2-4934-8d60-bc8ea4267b6d'),
+('9e03ec9f-2419-4e9a-b8c3-78f4adb3b577','c903c8ac-ead2-4934-8d60-bc8ea4267b6d'),
+('9e03ec9f-2419-4e9a-b8c3-78f4adb3b577','3fe6862b-ff33-478e-b3ad-8e42f5e1dfbf');
+
+INSERT INTO regiones VALUES
+('9e03ec9f-2419-4e9a-b8c3-78f4adb3b577','sudamerica'),
+('3fe6862b-ff33-478e-b3ad-8e42f5e1dfbf','norte america');
+
+INSERT INTO personas VALUES
+('c903c8ac-ead2-4934-8d60-bc8ea4267b6d','rodriuez','nicolas','9e03ec9f-2419-4e9a-b8c3-78f4adb3b577'),
+('d8445926-cce7-4220-902d-665f0b2e5bea','guevara','antonella','3fe6862b-ff33-478e-b3ad-8e42f5e1dfbf');
+
+
+SELECT pr.referencia,pr.marca,pr.precio
+FROM pedidos as p
+INNER JOIN pedidos_productos as pp
+ON p.id = pp.pedido_id
+INNER JOIN productos as pr
+ON pp.producto_id = pr.id
+WHERE p.id = '9e03ec9f-2419-4e9a-b8c3-78f4adb3b577';
+
+
+SELECT * FROM categorias;
+
+SELECT * FROM users as u
+INNER JOIN users_roles as ur
+ON u.user_id = ur.user_id;
+
+SELECT * FROM productos as p
+INNER JOIN categorias as c
+ON p.categoria_id = c.id
+WHERE c.id = 'd628bdca-76ce-4339-9206-f5c4f5a05329';
+
+SELECT p.marca, p.referencia, p.precio, pp.cantidad
+FROM productos p
+INNER JOIN pedido_producto pp
+ON p.id = pp.producto_id
+WHERE pp.pedido_id = '3ce34065-371a-48b3-ad26-26cb5437013f';
+
+
+@Query("select p.marca from Producto p inner join p.pedido_producto pp where pp.pedido_id = :pedido_id")
+
+
+
+
+
+
+

@@ -1,0 +1,10 @@
+===============add ddatos a un array=================
+Persona p1 = new Persona((long) 1,"nicolas",LocalDateTime.now());
+		Persona p2 = new Persona((long) 2,"antonela",LocalDateTime.now());
+		Persona p3 = new Persona((long) 3,"nelson",LocalDateTime.now());
+
+		List<Persona> personas = Arrays.asList(p1,p2,p3);
+
+		for(Persona p: personas) {
+			System.out.println(p.getId()+" "+p.getName()+" "+p.getDate());
+		}
