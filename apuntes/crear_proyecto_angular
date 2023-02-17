@@ -1,3 +1,162 @@
+_____comandos__________
+node -v
+npm -v
+tsc -v
+ng version
+cd src/app -> mkdir footer
+cd footer
+ng new <nombreproyecto>
+ng generate class footer.component
+ng g c shared/components/header //crear componente en la ruta especificada
+ng g m components/pages/home -m=app --route home //genera component, module and routing
+ng g m components/pages/characters //unicamente genera el modulo
+ng g m components/pages/characters/character-list -m=app --route character-list
+ng generate component directiva => ng g c directiva // /clientes-app, automaticamente se import en app.modle.ts y add en declarations, spec.ts es para pruebas de test borrar el implements a que no se va a usar y dejar solo el constructor eliminar stylos
+ng serve -> ng serve -o -> ng serve --open
+clientes-app => ng g c clientes
+app/clientes -> ng g class cliente
+src/app/clientes -> ng g service cliente //g = --generate
+ng g c form --flat //--flat para no crear la carpeta
+
+
+npm install sweetalert2 --save
+
+si no funciona bootstrap
+    1. reiniciar el servidor
+    2. add @import "../node_modules/bootstrap-grid-only-css/dist/css/bootstrap-grid.min.css";
+
+
+
+______add bootstrap___________
+opcion_1
+
+    - acceder a los links click der guardar todos los archivos
+    - crear assets/css y js  add archivos
+opcion_2
+    add angular.js/styles[add_rutas] y scripts["assets/js/jquery.slim.min.js",]
+
+opcion_3
+    npm i bootstrap jquery @popperjs/core --save
+    npm install bootstrap@5.2.x jquery bundle popper.js --save //desde la carpeta raiz
+    /node_modules/bootstrap/dist/css, jquery ó js
+    - cambiar la ruta en angular.js con la ruta de node_modules
+        ej = /home/nian/Documentos/frontEnd/angular/clientes-app/node_modules/jquery/dist/
+
+_____instalar__________
+- node
+- npm
+- typescript
+- cli
+- ng version
+
+- ng add @angular/material //angular material
+    seleccionar
+        - Indigo pink
+        - typography => yes
+        - animation => yes
+        -
+
+- npm install bootstrap-grid-only-css --save //--save para que se guarde en el package json
+    add en angular.json "styles"
+        "./node_modules/bootstrap-grid-only-css/dist/css/bootstrap-grid.min.css"
+- configurar rutas en tsconfig.json para poder llamar las rutas mas facil con @nomreruta
+"paths": {
+      "@app/*":["src/app/*"],
+      "@shared/*":["src/app/shared/*"],
+      "@environment/*":["src/environment/*"],
+      "@characters/*":["src/app/components/pages/characters/*"],
+      "@pages/*":["src/app/components/pages/*"]
+    },
+
+
+
+cd src/app/
+    crear folder components y pages
+    dentro de components crear navbar
+        ng g c navbar
+    dentro de paes crear signup
+        ng g c signup
+
+add el selector de navbar en html principal (html.component)
+    <app-navbar><app-navbar>
+    <router-outlet><router-outlet> //para mostrar el contenido de componentes(hijos)
+
+crear un folder de services
+    crear helper.ts
+        let baseUrl = "https://localost:8080"
+        export default baseUrl
+
+
+
+==========imports===========
+import { HttpClientModule } from "@angular/common/http"; //para realizar coneccion con back
+
+bootstrap se add en index.html
+
+
+
+_______crear proyecto________
+ng new <nombreproyecto>
+ng serve -o //ejecutar app en el servidor --open
+
+borrar html app.component para limpiar plantilla de inicio
+
+add etiqueta en app.component para header <app-header></app-header>
+
+crear src/header/header.component.html
+crear component para el header app/header/header.component.ts
+    add dentro
+    import { Component } from "@angular/core";
+
+    @Component({
+    selector: 'app-header',
+    templateUrl: './header.component.html', //para cargar add navbar de una manera independiente
+    styleUrl: ['./footer.component.css'] //se pueden add varios estilos para este componente
+    template: `<h1>Angular - spring</h1>` //add el navbar dentro de las comillas especiales para prueba
+    })
+
+    export class HeaderComponent{
+        title: string = 'App Angular Spring'; //add variables para reemplazar en etiquetas html {{title}}
+    }
+
+===siempre qe se cree un modulo se debe import y add dentro de declarations
+add en app.module
+    import { HeaderComponent } from './header/header.component';
+    declarations: [
+    AppComponent,
+    HeaderComponent //el mismo del import
+    ],
+
+===crear clientes
+    clientes-app => ng g c clientes
+    app/clientes -> ng g class cliente
+
+===import services and add in providers
+
+=========observable RxJs=============
+
+=========consumo de api===============
+
+____add app.module
+    import { HttpClientModule } from "@angular/common/http"; //para realizar coneccion con back
+
+____add cliente.service____
+    import { HttpClient } from "@angular/common/http";
+
+____add in constructor_____
+    constructor(private http: HttpClient) { }
+
+____crear form component /clientes-app___
+    ng g c clientes/form --flat //flat indica qe no cree la carpeta form solo crea los componentes
+
+____configurar fecha de datapicker angular material_________
+____se debe instalar para que cargue la fecha exacta al momento de editar
+npm install --save@angular/material-moment-adapter
+npm install --save moment
+
+
+
+
 npm i bootstrap jquery @popperjs/core //instalar bootstrap en el proecto
 ng new <nombre_proyecto>
     add archivo de rutas

@@ -1,0 +1,22 @@
+responseEntity<?> //? tipo de objeto generic que acepta cualquier valor de retorno
+
+=========revisar version de dependencias hibernate ==============
+dependencis/hibernate-core.org-hibernate-dialect/MYSQL-InnoDBDialect
+
+=========annotations=============================================
+@Column(name = "create_at") //cambiar el nombre de la columna
+@Temporal(TemporalType.DATE) //selecciona formato de fecha
+	private String createAt;
+@CrossOrigin(origins = "http://localhost:4200") //permitir acceso del front angular
+
+
+
+=========crear archivo sql para injectar datos===================
+new/otro/SQLDeveloped/SQLFile/import.sql
+
+
+==========activar validaciones de entity en controller==============
+pasar como parametro la anotación @valid(javax.validation)
+BindignResult result (en update se debe poner ntes del pathVariable)
+
+
