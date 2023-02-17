@@ -1,17 +1,34 @@
-CREATE TABLE
-();
+CREATE TABLE lugar(
+    id BIGINT PRIMARY KEY,
+    name VARCHAR(30) NOT NULL UNIQUE,
+    url VARCHAR(200) NOT NULL
+);
+
+CREATE TABLE personaje(
+    id,
+    name,
+
+);
 
 INSERT INTO roles VALUES
 ('bec74e3b-af44-4871-aecd-4f87c6782839','ROLE_ADMIN'),
 ('cae2d7f4-b2c0-4cf3-937e-4b19113bfcfd','ROLE_USER');
 
-INSERT INTO users VALUES
-('a0b59c87-6b30-44d8-93c9-454d639d7733','$2a$10$bDuvEMy6GwZ5ZcNpPVaDGuHow8EKTArQl7YWVPTcW0Ed5cfqmjvP2','nian'),
-('c01e9194-a5a9-4964-b618-b196651757c1','$2a$10$bDuvEMy6GwZ5ZcNpPVaDGuHow8EKTArQl7YWVPTcW0Ed5cfqmjvP2','niko');
+INSERT INTO usuarios VALUES
+('c01e9194-a5a9-4964-b618-b196651757c1','$2a$10$AzCVK87lZhyZV3Byy.QLUeKpVAkm9iJIPqewv/0xyb.WHWdytXiSq','niko');
 
-INSERT INTO users_roles VALUES
-('a0b59c87-6b30-44d8-93c9-454d639d7733','bec74e3b-af44-4871-aecd-4f87c6782839'),
+
+('153f522e-1cee-46ea-89b8-ca4f219c8e0c','$2a$10$0XC9050DxAJOhxHRMsx75OsaYr1ykn3xkGjgrCcmRTkkcwGzjutZG','anto');
+
+('a0b59c87-6b30-44d8-93c9-454d639d7733','$2a$10$bDuvEMy6GwZ5ZcNpPVaDGuHow8EKTArQl7YWVPTcW0Ed5cfqmjvP2','nian'),
+
+INSERT INTO usuarios_roles VALUES
 ('c01e9194-a5a9-4964-b618-b196651757c1','cae2d7f4-b2c0-4cf3-937e-4b19113bfcfd');
+
+
+('153f522e-1cee-46ea-89b8-ca4f219c8e0c','bec74e3b-af44-4871-aecd-4f87c6782839');
+
+('a0b59c87-6b30-44d8-93c9-454d639d7733','bec74e3b-af44-4871-aecd-4f87c6782839'),
 
 
 id UUID PRIMARY KEY DEFAULT gen_random_uuid(), //generar uuid incremental

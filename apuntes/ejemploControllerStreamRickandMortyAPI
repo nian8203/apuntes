@@ -1,0 +1,41 @@
+	@Override
+	public EpisodioFormat getEpisodioPorId(Long id) {
+		// TODO Auto-generated method stub
+		EpisodioFormat episodioFormat = new EpisodioFormat();
+		Episodio episodio = template.getForObject(baseUrl+"/episode/"+id, Episodio.class);
+		List<String> urlsPersonajes = episodio.getCharacters();
+		List<Lugar> lugarPorPersonaje = new ArrayList<>();
+
+		List<Personaje> listadoPersonajes = urlsPersonajes.stream()
+				.map(url -> template.getForObject(url, Personaje.class))
+				.collect(Collectors.toList());
+
+		for(Personaje per: listadoPersonajes) {
+			String url = per.getLocation().getUrl();
+
+			if(!url.equals("")) {
+				 lugarPorPersonaje.add(template.getForObject(url, Lugar.class));
+
+				 for (Lugar lug: lugarPorPersonaje) {
+					 per.getLocation().setId(lug.getId());
+					 per.getLocation().setName(lug.getName());
+					 per.getLocation().setType(lug.getType());
+					 per.getLocation().setDimension(lug.getDimension());
+				 }
+//
+			}else {
+				 per.getLocation().setId((long)-1);
+				 per.getLocation().setName("unknown");
+				 per.getLocation().setType("unknown");
+				 per.getLocation().setDimension("unknown");
+			}
+		}
+
+		episodioFormat.setId(episodio.getId());
+		episodioFormat.setName(episodio.getName());
+		episodioFormat.setCharacters(listadoPersonajes);
+
+
+
+		return episodioFormat;
+	}

@@ -1,0 +1,34 @@
+npm i bootstrap jquery @popperjs/core //instalar bootstrap en el proecto
+ng new <nombre_proyecto>
+    add archivo de rutas
+    seleccionar tipo de Styles
+ng g service services/task
+ng g interface interfaces/task
+
+    add en interface las propiedades de la tarea
+    userId: string;
+    id: string;
+    title: string;
+    completed: boolean;
+
+    add en app.module
+    import { HttpClientModule } from "@angular/common/http";
+
+    add al servicio
+    import { HttpClient } from "@angular/common/http";
+
+    injectae en el constructor
+    constructor(
+    private taskService: TaskService,
+    private http: HttpClient
+    ) { }
+
+    add metodo para listar datos
+    const path = '    https://jsonplaceholder.typicode.com/todos
+';
+return this http
+
+
+
+
+

@@ -1,3 +1,9 @@
+//realizar conteo de tablas en base de datos
+SELECT COUNT(*) FROM Information_schema.Tables WHERE table_schema = 'prueba'
+
+SELECT COUNT(*) from Information_Schema.Tables where TABLE_TYPE = 'BASE TABLE' and table_schema = 'prueba';
+
+
 show create table nombre tabla; //revisar llaves foraneas en tabla
 alter table cursos drop foreign key cursos_ibfk; //borrar llave foranea
 
@@ -30,6 +36,7 @@ alter table cursos drop primary key;
 alter table cursos add id int not null AUTO_INCREMENT primary key;
 alter table registroAlumnos add curso VARCHAR(4) not null after apellido;
 
+alter table ciudades CHANGE Departamento_id departamento_id VARCHAR(50) NOT NULL UNIQUE;
 
 create table registroAlumnos (id int not null AUTO_INCREMENT, nombre VARCHAR(20) not null, PRIMARY KEY(id));
 delete from registroAlumnos where nombre = 'jghjgj'; // borra regsitros pero el conteo continua donde iba

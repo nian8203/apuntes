@@ -1,3 +1,14 @@
+shit + ( = //encierra la seleccion dentro de parentesis
+
+//generar id
+@Id
+@GeneratedValue(strategy = GenerationType.UUID)
+private UUID id;
+
+@JsonProperty("nombreDeseado") //cambia el nombre d una propiedad
+
+@JsonPropertyOrder({"id","name","characters"}) //cambiar le orden de los atributos
+
 ===============add ddatos a un array=================
 Persona p1 = new Persona((long) 1,"nicolas",LocalDateTime.now());
 		Persona p2 = new Persona((long) 2,"antonela",LocalDateTime.now());

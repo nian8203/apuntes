@@ -3,3 +3,6 @@ CREATE DATABASE exammed WITH OWNER admin; //crear db
 psql -U admin -d exammed -h localhost -W //login a db create
 postgres=# \c dvdrental //ingresar a db
 dvdrental=# select count(*) from film;
+CREATE USER nombre_usuario WITH password '123456'
+\d
+select * from pg_stat_activity //ver sesiones usadas
